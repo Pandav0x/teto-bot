@@ -15,7 +15,7 @@ module.exports = (msg) => {
     let tokens = msg.content.split(' ');
     let command = tokens.shift();
 
-    if(command.charAt(0) === '!'){
+    if(command.charAt(0) === process.env.BOT_PREFIX){
         command = command.substr(1);
         if(commands.hasOwnProperty(command)){
             commands[command].execute(msg, tokens);
