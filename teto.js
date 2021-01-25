@@ -15,6 +15,7 @@ client.login(process.env.BOT_TOKEN);
 
 client.on('ready', () => {
     console.info('Connected.');
+    client.user.setActivity('Being worked on.');
 });
 
 client.on('message', commandHandler);
