@@ -12,15 +12,18 @@ require('fs').readdirSync('./commands').forEach(function(commandFile) {
 });
 
 module.exports = (msg) => {
+    console.info(`${msg.author.username}: ${msg.content}`);
+
     let tokens = msg.content.split(' ');
     let command = tokens.shift();
 
     if(command.charAt(0) === process.env.BOT_PREFIX){
         command = command.substr(1);
         if(commands.hasOwnProperty(command)){
-            commands[command].execute(msg, tokens);
+            let response = commands[command].execute(msg, tokens);
+            if(response === 0){
+                msg.channel.send(`> ${commands[command].getHelp()}`);
+            }
         }
     }
-
-    console.info(`${msg.author.username}: ${msg.content}`);
 };
