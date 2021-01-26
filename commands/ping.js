@@ -7,6 +7,9 @@ module.exports = {
     getAliases: () => {
         return [];
     },
+    getHelp: () => {
+        return `${process.env.BOT_PREFIX}ping`;
+    },
     execute: (msg, args) => {
         msg.channel.send('pong !');
     }
