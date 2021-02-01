@@ -8,4 +8,8 @@ module.exports = class API {
     constructor(){
         this._cacheClient = new Cache(CacheStrategyEnum.redis);
     }
+
+    call(){
+
+    }
 };
