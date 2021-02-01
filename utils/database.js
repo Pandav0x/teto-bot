@@ -5,13 +5,15 @@ const sqlite3 = require('sqlite3');
 module.exports = class Database {
     _db  = null;
     _guildId = null;
+    _name = null;
     constructor(discordGuildId){
         this._guildId = discordGuildId;
+        this._name = `teto.${this._guildId}.db`;
     }
 
     _connect() {
         if(this._db === null){
-            this._db = new sqlite3.Database(`./databases/teto.${this._guildId}.db`, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE);
+            this._db = new sqlite3.Database(`./databases/${this._name}`, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE);
         }
         return this;
     }
@@ -35,5 +37,9 @@ module.exports = class Database {
             this._connect();
         }
         return this._db;
+    }
+
+    getName() {
+        return this._name;
     }
 };
