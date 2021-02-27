@@ -17,6 +17,10 @@ module.exports = {
     },
     execute: async (msg, args) => {
 
+        return 0;
+
+        //TODO - continue
+
         if(args.length !== 2){
             return 0;
         }
