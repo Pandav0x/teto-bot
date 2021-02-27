@@ -15,7 +15,7 @@ module.exports = {
         let args_values = [
             {'name': 'xman', 'regex': /\d+man/, 'value': null},
             {'name': 'player_comp', 'regex': /^(\d{1,2},){2}\d{1,2}$/, 'value': null},
-            {'name': 'date', 'regex': /^(([0-9]{1,2}(jan|fev|mar|avr|may|jun|jul|aug|sept|oct|dec))|([0-9]{1,2}\/[0-9]{1,2}\/[0-9]{2,4}))$/i, 'value': null},
+            {'name': 'date', 'regex': /^(([0-9]{1,2}(jan|fev|mar|avr|may|jun|jul|aug|sept|oct|dec))|([0-9]{1,2}\/[0-9]{1,2}(\/[0-9]{2,4}|)))$/i, 'value': null},
             {'name': 'time', 'regex': /^[0-9]{1,2}(:[0-9]{2}|)(a|p)m$/, 'value': null},
             {'name': 'timezone', 'regex': /(st|gmt)/i, 'value': null}
         ];
@@ -33,12 +33,18 @@ module.exports = {
             }
         });
 
-        //console.log(unprocessed_args);
-
         args_values.push({'name': 'description', 'value': unprocessed_args.join(' ')});
 
-        console.log(args_values);
 
-        msg.channel.send('pong !');
+        //TODO - create embedded
+        let message = '';
+
+        args_values.forEach((e) => {
+            if(e.value !== null){
+                message += `${e.name}: ${e.value}\n`;
+            }
+        });
+
+        msg.channel.send(message);
     }
 };
