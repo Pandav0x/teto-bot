@@ -1,5 +1,7 @@
 'use strict';
 
+const Discord = require('discord.js');
+
 module.exports = {
     getName: () => {
         return 'partyfinder';
@@ -37,14 +39,44 @@ module.exports = {
 
 
         //TODO - create embedded
-        let message = '';
+        //let message = '';
 
+        let formated_array = [];
         args_values.forEach((e) => {
-            if(e.value !== null){
-                message += `${e.name}: ${e.value}\n`;
-            }
+            formated_array[e.name] = e.value;
         });
 
-        msg.channel.send(message);
+        console.log(formated_array);
+
+
+        let exampleEmbed = new Discord.MessageEmbed()
+            .setColor('#0099ff')
+            .setTitle(formated_array.description ?? 'Oo')
+            .setDescription('jalsdjlsjdlaj')
+            .addField('Inline field title', 'Some value here', true)
+            .setThumbnail('https://static.wikia.nocookie.net/nausicaa/images/a/a4/Fox_squirrel.gif/revision/latest?cb=20100605225647')
+            .setDescription('Your group is looking for the following members:');
+
+            /*module.exports.getJobFields(formated_array.xman, formated_array.player_comp).forEach((field, exampleEmbed) => {
+               exampleEmbed.addField(field);
+            });*/
+
+            exampleEmbed.setFooter(`created by ${msg.member.displayName}`);
+
+        msg.channel.send(exampleEmbed);
+    },
+    getJobFields: (xman, player_comp) => {
+
+        if(xman === null && player_comp === null){
+            return [];
+        }
+
+        let [tankNumber, healersNumber, dpsNumber] = player_comp.split(',');
+
+        return [
+            { name: 'Tank', value: [[].fill('-', tankNumber)], inline: true },
+            { name: 'heals', value: [[].fill('-', healersNumber)], inline: true },
+            { name: 'dps', value: [[].fill('-', dpsNumber)], inline: true }
+        ];
     }
 };
