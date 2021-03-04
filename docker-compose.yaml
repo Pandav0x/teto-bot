@@ -1,7 +1,9 @@
+version: "3"
 services:
   bot:
     image: node:15-alpine
     working_dir: /
+    build: .
     volumes:
       - ./src:/src
       - ./node_modules:/node_modules
@@ -13,8 +15,7 @@ services:
       - BOT_PREFIX=$BOT_PREFIX
       - REDIS_URL=redis://127.0.0.1:6379
     depends_on:
-      redis:
-        condition: service_started
+      - redis
     command: node ./src/teto.js
   redis:
     image: redis
