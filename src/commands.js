@@ -1,7 +1,7 @@
 'use strict';
 
 let commands = {};
-require('fs').readdirSync('./commands').forEach(function(commandFile) {
+require('fs').readdirSync('./src/commands').forEach(function(commandFile) {
     let requiredCommand = require('./commands/' + commandFile);
     commands[requiredCommand.getName()] = requiredCommand;
     if(requiredCommand.getAliases() !== []){
