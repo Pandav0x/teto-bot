@@ -3,8 +3,7 @@ services:
     image: node
     networks:
       - back-tier
-    env_file: .env
-    evironment:
+    environment:
       - BOT_ID=$BOT_ID
       - BOT_TOKEN=$BOT_TOKEN
       - BOT_PREFIX=$BOT_PREFIX
@@ -16,4 +15,4 @@ services:
     networks:
       - back-tier
   networks:
-    - back-tier: {}
+    back-tier: {}
