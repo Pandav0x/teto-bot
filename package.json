@@ -15,6 +15,6 @@
     "line-reader": "0.4.*",
     "node-fetch": "2.6.*",
     "redis": "3.0.*",
-    "sqlite3": "^5.0.2"
+    "sqlite": "4.0.19"
   }
 }

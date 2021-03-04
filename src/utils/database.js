@@ -1,6 +1,6 @@
 'use strict';
 
-const sqlite3 = require('sqlite3');
+const sqlite = require('sqlite');
 
 module.exports = class Database {
     _db  = null;
@@ -13,7 +13,7 @@ module.exports = class Database {
 
     _connect() {
         if(this._db === null){
-            this._db = new sqlite3.Database(`./databases/${this._name}`, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE);
+            this._db = new sqlite.Database(`./databases/${this._name}`, sqlite.OPEN_READWRITE | sqlite.OPEN_CREATE);
         }
         return this;
     }
