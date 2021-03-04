@@ -1,0 +1,19 @@
+services:
+  nodejs:
+    image: node
+    networks:
+      - back-tier
+    env_file: .env
+    evironment:
+      - BOT_ID=$BOT_ID
+      - BOT_TOKEN=$BOT_TOKEN
+      - BOT_PREFIX=$BOT_PREFIX
+      - REDIS_URL=redis://127.0.0.1:6379
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - back-tier
+  networks:
+    - back-tier: {}
