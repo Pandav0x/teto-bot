@@ -3,7 +3,6 @@ services:
   bot:
     image: node:15-alpine
     working_dir: /
-    build: .
     volumes:
       - ./src:/src
       - ./node_modules:/node_modules
