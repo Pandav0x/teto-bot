@@ -1,5 +1,5 @@
 services:
-  nodejs:
+  bot:
     image: node:15-alpine
     working_dir: /
     volumes:
