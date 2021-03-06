@@ -2,6 +2,12 @@
 .idea
 .vscode
 
+# TS builds
+build/
+
+# Personal cache
+var/
+
 # Logs
 logs
 *.log
@@ -118,6 +124,3 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
-
-# personal cache
-var/

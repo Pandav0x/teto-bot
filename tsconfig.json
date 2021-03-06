@@ -1,1 +1,18 @@
-{}
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "alwaysStrict": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "allowJs": true,
+        "outDir": "build/",
+        "skipLibCheck": true
+    },
+
+    "include": ["src/**/*"],
+    "exlude": ["node_modules/*", "**/*.specs.ts", "build/*"]
+}
