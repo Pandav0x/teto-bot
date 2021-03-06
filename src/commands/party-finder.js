@@ -55,13 +55,11 @@ module.exports = {
             .setDescription('jalsdjlsjdlaj')
             .addField('Inline field title', 'Some value here', true)
             .setThumbnail('https://static.wikia.nocookie.net/nausicaa/images/a/a4/Fox_squirrel.gif/revision/latest?cb=20100605225647')
-            .setDescription('Your group is looking for the following members:');
-
-            /*module.exports.getJobFields(formated_array.xman, formated_array.player_comp).forEach((field, exampleEmbed) => {
-               exampleEmbed.addField(field);
-            });*/
-
-            exampleEmbed.setFooter(`created by ${msg.member.displayName}`);
+            .setDescription('Your group is looking for the following members:')
+            .addFields(
+                { name: 'heals', value: [[].fill('-', healersNumber)], inline: true },
+                { name: 'dps', value: [[].fill('-', dpsNumber)], inline: true })
+            .setFooter(`created by ${msg.member.displayName}`);
 
         msg.channel.send(exampleEmbed);
     },
@@ -74,9 +72,9 @@ module.exports = {
         let [tankNumber, healersNumber, dpsNumber] = player_comp.split(',');
 
         return [
-            { name: 'Tank', value: [[].fill('-', tankNumber)], inline: true },
-            { name: 'heals', value: [[].fill('-', healersNumber)], inline: true },
-            { name: 'dps', value: [[].fill('-', dpsNumber)], inline: true }
+            new Discord.EmbedFieldData(), //TODO
+            new Discord.EmbedFieldData(),
+            new Discord.EmbedFieldData()
         ];
     }
 };
