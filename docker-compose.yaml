@@ -2,7 +2,7 @@ version: "3"
 services:
   node-server:
     build: .docker/node-server
-    restart: always
+    #restart: always
     working_dir: /teto/build/
     depends_on:
       - redis
