@@ -1,23 +1,28 @@
 'use strict';
 
 const Discord = require('discord.js');
+import { Message } from "discord.js";
+import Command from "../contracts/command";
 
-module.exports = {
-    getName: () => {
+export default class PartyFinder implements Command {
+    getName(): string {
         return 'partyfinder';
-    },
-    getAliases: () => {
+    }
+
+    getAliases(): Array<string> {
         return ['pf', 'raid'];
-    },
-    getHelp: () => {
+    }
+
+    getHelp(): string {
         return `${process.env.BOT_PREFIX}partyfinder <xman> [player_comp] [date] [time] [timezone] <description>`;
-    },
-    execute: (msg, args) => {
+    }
+
+    execute(msg: Message, args: Array<string>): number {
 
         let args_values = [
             {'name': 'xman', 'regex': /\d+man/, 'value': null},
             {'name': 'player_comp', 'regex': /^(\d{1,2},){2}\d{1,2}$/, 'value': null},
-            {'name': 'date', 'regex': /^(([0-9]{1,2}(jan|fev|mar|avr|may|jun|jul|aug|sept|oct|dec))|([0-9]{1,2}\/[0-9]{1,2}(\/[0-9]{2,4}|)))$/i, 'value': null},
+            {'name': 'date', 'regex': /^(([0-9]{1,2}(jan|fev|mar|apr|may|jun|jul|aug|sept|oct|dec))|([0-9]{1,2}\/[0-9]{1,2}(\/[0-9]{2,4}|)))$/i, 'value': null},
             {'name': 'time', 'regex': /^[0-9]{1,2}(:[0-9]{2}|)(a|p)m$/, 'value': null},
             {'name': 'timezone', 'regex': /(st|gmt)/i, 'value': null}
         ];
@@ -41,7 +46,7 @@ module.exports = {
         //TODO - create embedded
         //let message = '';
 
-        let formated_array = [];
+        let formated_array: Array<string> = [];
         args_values.forEach((e) => {
             formated_array[e.name] = e.value;
         });
@@ -61,13 +66,16 @@ module.exports = {
                exampleEmbed.addField(field);
             });*/
 
-            exampleEmbed.setFooter(`created by ${msg.member.displayName}`);
+            exampleEmbed.setFooter(`created by ${msg?.member?.displayName}`);
 
         msg.channel.send(exampleEmbed);
-    },
-    getJobFields: (xman, player_comp) => {
 
-        if(xman === null && player_comp === null){
+        return 0;
+    } 
+
+    getJobFields(xman: number|null, player_comp: string|null): Array<object> {
+
+        if(xman === null || player_comp === null){
             return [];
         }
 
