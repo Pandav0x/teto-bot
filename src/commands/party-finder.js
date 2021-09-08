@@ -61,7 +61,7 @@ module.exports = {
                 exampleEmbed.addFields(job);
             });
 
-        msg.channel.send(exampleEmbed);
+        msg.channel.send({embeds: exampleEmbed});
     },
     getJobFields: (xman, player_comp) => {
 

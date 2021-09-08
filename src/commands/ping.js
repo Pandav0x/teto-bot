@@ -11,6 +11,6 @@ module.exports = {
         return `${process.env.BOT_PREFIX}ping`;
     },
     execute: (msg, args) => {
-        msg.channel.send('pong !');
+        msg.channel.send({content: 'pong !'});
     }
 };

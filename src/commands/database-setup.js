@@ -16,6 +16,6 @@ module.exports = {
 
         dbsetup(msg.guild.id);
 
-        msg.channel.send('Database setup over.');
+        msg.channel.send({content: 'Database setup over.'});
     }
 };
