@@ -4,8 +4,8 @@ console.log('Teto is waking up.');
 
 require('dotenv').config();
 
-const Discord = require('discord.js');
-const client =  new Discord.Client();
+const { Client, Intents} = require('discord.js');
+const client =  new Client({ intents: Intents.FLAGS.GUILDS});
 
 const commandHandler = require('./commands');
 
@@ -15,7 +15,7 @@ client.login(process.env.BOT_TOKEN);
 
 client.on('ready', () => {
     console.info('Connected.');
-    client.user.setActivity('with the nerves of his creator.');
+    client.user.setActivity('lost in the valley.');
 });
 
 client.on('message', commandHandler);

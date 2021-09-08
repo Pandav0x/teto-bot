@@ -22,7 +22,7 @@ module.exports = (msg) => {
         if(commands.hasOwnProperty(command)){
             let response = commands[command].execute(msg, tokens);
             if(response === 0){
-                msg.channel.send(`> ${commands[command].getHelp()}`);
+                msg.channel.send({ content: `> ${commands[command].getHelp()}`});
             }
         }
     }
