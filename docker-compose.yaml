@@ -6,6 +6,7 @@ services:
     volumes:
       - ./src:/teto/src
       - ./databases:/teto/databases
+      - ./schemas:/teto/schemas
       - ./node_modules:/teto/node_modules
     networks:
       - back-tier

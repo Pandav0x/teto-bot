@@ -1,10 +1,9 @@
 'use strict';
 
 const sqlite3 = require('sqlite3');
-const dbsetup = require('../scripts/database-setup');
 
 module.exports = class Database {
-    _db  = null;
+    _connection  = null;
     _guildId = null;
     _name = null;
     
@@ -14,8 +13,8 @@ module.exports = class Database {
     }
 
     _connect() {
-        if(this._db === null){
-            this._db = new sqlite3.Database(
+        if(this._connection === null){
+            this._connection = new sqlite3.Database(
                 `/teto/databases/${this._name}`, 
                 sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE,
                 error => {
@@ -25,18 +24,13 @@ module.exports = class Database {
                     }
                 }
             );
-            this._initialize();
         }
         return this;
     }
 
     _disconnect() {
-        this._db.close();
-        this._db = null;
-    }
-
-    _initialize() {
-        dbsetup(this._guildId);
+        this._connection.close();
+        this._connection = null;
     }
 
     flush() {
@@ -48,10 +42,10 @@ module.exports = class Database {
         this._disconnect();
     }
 
-    get database() {
+    get connection() {
         this._connect();
 
-        return this._db;
+        return this._connection;
     }
 
     get name() {

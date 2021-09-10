@@ -2,21 +2,24 @@
 
 const lineReader = require('line-reader');
 const Database = require('../utils/database');
+const path = require('path');
 const fs = require('fs');
 
 module.exports = (guildID) => {
     let database = new Database(guildID);
 
-    let guildDatabase = database.database
+    let scriptPath = path.resolve('schemas/base-schema.sql');
 
-    console.log(database)
+    console.log('Start of db script.');
 
-    let path ='schemas/base-schema.sql';
+    let baseSchemaScript = fs.readFileSync(scriptPath).toString();
 
-    console.log(database.name, path);
-
-    lineReader.eachLine(path, function(line) {
-        console.log(`running "${line}" for ${database.name}`);
-        database.getDatabase().run(line);
+    database.connection.serialize(() => {
+        console.log(baseSchemaScript);
+        database.connection.run(baseSchemaScript, (err) => {
+            if(err) throw err;
+        });
     });
+
+    console.log('End of db script.');
 };
