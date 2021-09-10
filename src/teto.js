@@ -15,7 +15,7 @@ client.login(process.env.BOT_TOKEN);
 
 client.on('ready', () => {
     console.info('Connected.');
-    client.user.setActivity('lost in the valley.');
+    client.user.setActivity('in the valley.');
 });
 
 client.on('message', commandHandler);
