@@ -1,11 +1,13 @@
 'use strict';
 
-const sqlite = require('sqlite');
+const sqlite3 = require('sqlite3');
+const dbsetup = require('../scripts/database-setup');
 
 module.exports = class Database {
     _db  = null;
     _guildId = null;
     _name = null;
+    
     constructor(discordGuildId){
         this._guildId = discordGuildId;
         this._name = `teto.${this._guildId}.db`;
@@ -13,7 +15,17 @@ module.exports = class Database {
 
     _connect() {
         if(this._db === null){
-            this._db = new sqlite.Database(`./databases/${this._name}`, sqlite.OPEN_READWRITE | sqlite.OPEN_CREATE);
+            this._db = new sqlite3.Database(
+                `/teto/databases/${this._name}`, 
+                sqlite3.OPEN_CREATE | sqlite3.OPEN_READWRITE,
+                error => {
+                    if(error){
+                        console.error(error.message);
+                        return false;
+                    }
+                }
+            );
+            this._initialize();
         }
         return this;
     }
@@ -21,6 +33,10 @@ module.exports = class Database {
     _disconnect() {
         this._db.close();
         this._db = null;
+    }
+
+    _initialize() {
+        dbsetup(this._guildId);
     }
 
     flush() {
@@ -32,14 +48,13 @@ module.exports = class Database {
         this._disconnect();
     }
 
-    getDatabase() {
-        if(this._db === null){
-            this._connect();
-        }
+    get database() {
+        this._connect();
+
         return this._db;
     }
 
-    getName() {
+    get name() {
         return this._name;
     }
 };

@@ -2,10 +2,11 @@ version: "3"
 services:
   bot:
     image: node:15-alpine
-    working_dir: /
+    working_dir: /teto
     volumes:
-      - ./src:/src
-      - ./node_modules:/node_modules
+      - ./src:/teto/src
+      - ./databases:/teto/databases
+      - ./node_modules:/teto/node_modules
     networks:
       - back-tier
     environment:
