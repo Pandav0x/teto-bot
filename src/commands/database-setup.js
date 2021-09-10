@@ -7,7 +7,7 @@ module.exports = {
         return 'database';
     },
     getAliases: () => {
-        return [];
+        return ['db'];
     },
     getHelp: () => {
         return `${process.env.BOT_PREFIX}database`;
