@@ -1,7 +1,5 @@
 'use strict';
 
-const { joinVoiceChannel } = require('@discordjs/voice');
-
 module.exports = {
     getName: () => {
         return 'join';
