@@ -19,9 +19,13 @@ module.exports = (msg) => {
         console.info(`${msg.author.username}: ${msg.content}`);
         command = command.substr(1);
         if(commands.hasOwnProperty(command)){
-            let response = commands[command].execute(msg, tokens);
-            if(response === 0){
-                msg.channel.send({ content: `> ${commands[command].getHelp()}`});
+            if(commands[command].isAvailable()){
+                let response = commands[command].execute(msg, tokens);
+                if(response === 0){
+                    msg.channel.send({ content: `> ${commands[command].getHelp()}`});
+                }
+            } else {
+                msg.channel.send({ content: `The command \`> ${commands[command].getName()}\` is not available at the moment.`});
             }
         }
     }
