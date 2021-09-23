@@ -9,7 +9,7 @@ module.exports = {
     getAliases: () => {
         return ['pf', 'raid'];
     },
-    available: () => {
+    isAvailable: () => {
         return true;
     },
     getHelp: () => {

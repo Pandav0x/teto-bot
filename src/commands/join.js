@@ -9,7 +9,7 @@ module.exports = {
     getAliases: () => {
         return ['j'];
     },
-    available: () => {
+    isAvailable: () => {
         return true;
     },
     getHelp: () => {

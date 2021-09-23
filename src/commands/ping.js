@@ -7,7 +7,7 @@ module.exports = {
     getAliases: () => {
         return [];
     },
-    available: () => {
+    isAvailable: () => {
         return true;
     },
     getHelp: () => {
