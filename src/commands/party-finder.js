@@ -9,6 +9,9 @@ module.exports = {
     getAliases: () => {
         return ['pf', 'raid'];
     },
+    available: () => {
+        return true;
+    },
     getHelp: () => {
         return `${process.env.BOT_PREFIX}partyfinder <xman> [player_comp] [date] [time] [timezone] <description>`;
     },

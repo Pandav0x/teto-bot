@@ -7,7 +7,10 @@ module.exports = {
         return 'join';
     },
     getAliases: () => {
-        return [];
+        return ['j'];
+    },
+    available: () => {
+        return true;
     },
     getHelp: () => {
         return `${process.env.BOT_PREFIX}join`;
@@ -20,7 +23,5 @@ module.exports = {
         }).catch((err) => {
             console.error(err.message);
         });
-
     }
 };
-   

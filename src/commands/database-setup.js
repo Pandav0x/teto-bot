@@ -9,6 +9,9 @@ module.exports = {
     getAliases: () => {
         return ['db'];
     },
+    available: () => {
+        return false;
+    },
     getHelp: () => {
         return `${process.env.BOT_PREFIX}database`;
     },

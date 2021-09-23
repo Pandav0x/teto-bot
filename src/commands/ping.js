@@ -7,6 +7,9 @@ module.exports = {
     getAliases: () => {
         return [];
     },
+    available: () => {
+        return true;
+    },
     getHelp: () => {
         return `${process.env.BOT_PREFIX}ping`;
     },
