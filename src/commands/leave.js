@@ -20,6 +20,5 @@ module.exports = {
         let connection = getVoiceConnection(msg.guild.id);
 
         connection.destroy();
-
     }    
 };
