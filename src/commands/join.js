@@ -21,7 +21,9 @@ module.exports = {
         let connection = joinVoiceChannel({
             channelId: userVC.id,
             guildId: userVC.guild.id,
-            adapterCreator: userVC.guild.voiceAdapterCreator,
+            adapterCreator: userVC.guild.voiceAdapterCreator
         });
+
+        console.log(`Bot connected to "#${userVC.name}" in the "${userVC.guild.name}" server`);
     }
 };
