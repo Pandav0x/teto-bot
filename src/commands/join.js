@@ -24,6 +24,6 @@ module.exports = {
             adapterCreator: userVC.guild.voiceAdapterCreator
         });
 
-        console.log(`Bot connected to "#${userVC.name}" in the "${userVC.guild.name}" server`);
+        console.log(`Bot connected to "#${userVC.name}" in the "${userVC.guild.name}" server.`);
     }
 };
