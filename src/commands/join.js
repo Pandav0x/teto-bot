@@ -1,5 +1,7 @@
 'use strict';
 
+const { joinVoiceChannel, VoiceConnectionStatus } = require('@discordjs/voice');
+
 module.exports = {
     getName: () => {
         return 'join';
@@ -15,11 +17,11 @@ module.exports = {
     },
     execute: (msg, args) => {
         let userVC = msg.member.voice.channel;
-        
-        userVC.join().then((connection) => {
-            console.log(`Joined "${userVC.name}" voice chat from "${userVC.guild.name}" server.`);
-        }).catch((err) => {
-            console.error(err.message);
+
+        let connection = joinVoiceChannel({
+            channelId: userVC.id,
+            guildId: userVC.guild.id,
+            adapterCreator: userVC.guild.voiceAdapterCreator,
         });
     }
 };
