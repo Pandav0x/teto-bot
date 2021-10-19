@@ -18,42 +18,43 @@ export default class PartyFinder implements Command {
     }
 
     execute(msg: Message, args: Array<string>): number {
-
-        let args_values = [
-            {'name': 'xman', 'regex': /\d+man/, 'value': null},
-            {'name': 'player_comp', 'regex': /^(\d{1,2},){2}\d{1,2}$/, 'value': null},
-            {'name': 'date', 'regex': /^(([0-9]{1,2}(jan|fev|mar|apr|may|jun|jul|aug|sept|oct|dec))|([0-9]{1,2}\/[0-9]{1,2}(\/[0-9]{2,4}|)))$/i, 'value': null},
-            {'name': 'time', 'regex': /^[0-9]{1,2}(:[0-9]{2}|)(a|p)m$/, 'value': null},
-            {'name': 'timezone', 'regex': /(st|gmt)/i, 'value': null}
-        ];
+        
+        let args_values = Array<{name: String, regex: RegExp, value: String|null}>(
+            {name: 'xman', regex: /\d+man/, value: null},
+            {name: 'player_comp', regex: /^(\d{1,2},){2}\d{1,2}$/, value: null},
+            {name: 'date', regex: /^(([0-9]{1,2}(jan|fev|mar|apr|may|jun|jul|aug|sept|oct|dec))|([0-9]{1,2}\/[0-9]{1,2}(\/[0-9]{2,4}|)))$/i, value: null},
+            {name: 'time', regex: /^[0-9]{1,2}(:[0-9]{2}|)(a|p)m$/, value: null},
+            {name: 'timezone', regex: /(st|gmt)/i, value: null}
+        );
 
         let unprocessed_args = [...args];
 
         console.log(unprocessed_args, args);
 
-        args.forEach((arg) => {
+        args.forEach(arg => {
             for(let i = 0; i < args_values.length; i++){
-                if(args_values[i].regex.test(arg.toString())){
+                if(args_values[i].regex.test(arg)){
                     args_values[i].value = arg;
                     unprocessed_args.splice(unprocessed_args.indexOf(arg), 1);
                 }
             }
         });
 
-        args_values.push({'name': 'description', 'value': unprocessed_args.join(' ')});
+        args_values.push({name: 'description', regex: /.*/,value: unprocessed_args.join(' ')});
 
 
         //TODO - create embedded
         //let message = '';
 
-        let formated_array: Array<string> = [];
-        args_values.forEach((e) => {
-            formated_array[e.name] = e.value;
-        });
+        let formated_array: Map<String, String|null> = new Map<String, String>();
+
+        args_values.forEach((arg => {
+            formated_array.set(arg.name, arg.value);
+        }));
 
         console.log(formated_array);
 
-
+/*
         let exampleEmbed = new Discord.MessageEmbed()
             .setColor('#0099ff')
             .setTitle(formated_array.description ?? 'Oo')
@@ -66,9 +67,9 @@ export default class PartyFinder implements Command {
                exampleEmbed.addField(field);
             });*/
 
-            exampleEmbed.setFooter(`created by ${msg?.member?.displayName}`);
+            //exampleEmbed.setFooter(`created by ${msg?.member?.displayName}`);
 
-        msg.channel.send(exampleEmbed);
+        msg.channel.send('check log bro');
 
         return 0;
     } 
@@ -79,12 +80,12 @@ export default class PartyFinder implements Command {
             return [];
         }
 
-        let [tankNumber, healersNumber, dpsNumber] = player_comp.split(',');
+        let [tankNumber, healerNumber, damageNumber] = player_comp.split(',');
 
         return [
-            { name: 'Tank', value: [[].fill('-', tankNumber)], inline: true },
-            { name: 'heals', value: [[].fill('-', healersNumber)], inline: true },
-            { name: 'dps', value: [[].fill('-', dpsNumber)], inline: true }
+            { name: 'Tank', value: [new Array(tankNumber).fill('-')], inline: true },
+            { name: 'Heal', value: [new Array(healerNumber).fill('-')], inline: true },
+            { name: 'Damage', value: [new Array(damageNumber).fill('-')], inline: true }
         ];
     }
 };
