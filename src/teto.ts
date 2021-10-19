@@ -3,20 +3,22 @@
 console.log('Teto is waking up.');
 
 import * as dotenv from "dotenv";
-import { Client } from "discord.js";
+import { Client, Intents } from "discord.js";
 import MessageHandler from "./commands";
 
 dotenv.config();
 
-const client =  new Client({ intents: 7 });
+const client =  new Client({ intents: [Intents.FLAGS.GUILDS | Intents.FLAGS.GUILD_MESSAGES | Intents.FLAGS.GUILD_MESSAGE_REACTIONS] });
+
+console.log('Setting up external connections.')
+
+client.on('ready', () => {
+    client.user?.setActivity('haha.');
+    //connect DB here
+});
 
 console.log('Attempting connection to discord.');
 
 client.login(process.env.BOT_TOKEN);
 
-client.on('ready', () => {
-    console.info('Connected.');
-    client.user?.setActivity('haha.');
-});
-
-client.on('message', (new MessageHandler()).handle);
+client.on('messageCreate', (new MessageHandler()).handle);
