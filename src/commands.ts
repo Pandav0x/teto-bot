@@ -1,33 +1,34 @@
 'use strict';
 
-import { Message } from "discord.js";
-import * as fs from "fs";
-import * as path from "path";
-import Command from "./contracts/command";
+import { Message } from 'discord.js';
+import * as fs from 'fs';
+import * as path from 'path';
+import Command from './contracts/command';
 
 export default class MessageHandler {
 
     commands: {[key: string]: Command};
 
     constructor() {
-        let a: {[key: string]: Command} = this.registerCommands();
-        this.commands = a;
+        this.commands = this.registerCommands();
     }
 
     registerCommands(): {[key: string]: Command} {
+        console.log('registerCommands');
+        
         let commands: {[key: string]: Command} = {};
        
         fs.readdirSync(`${__dirname}/commands`).forEach((commandFile: string) => {
             
-            if(path.extname(commandFile) === ".map") {
+            if(path.extname(commandFile) === '.map') {
                 return;
             }
 
             let requiredCommand = require(`${__dirname}/commands/${commandFile}`); 
 
-            if(!requiredCommand.hasOwnProperty("getName") || typeof requiredCommand.getName !== "function") {
+            if(!Object.prototype.hasOwnProperty.call(requiredCommand, 'getName')) {
                 return;
-            }          
+            }
 
             commands[requiredCommand.getName()] = requiredCommand;
             if(requiredCommand.getAliases() !== []){
@@ -35,16 +36,16 @@ export default class MessageHandler {
                     commands[alias] = commands[requiredCommand.getName()];
                 });
             }
-        });        
+        });
+
+        console.log('from method:', commands);
 
         return commands;
     }
 
     handle(msg: Message): void {
-       
-       console.log('coucou');
-       
-        /*console.log(`${msg.author.username}: ${msg.content}`); 
+              
+        console.log(`${msg.author.username}: ${msg.content}`); 
 
         let tokens: Array<string> = msg.content.split(' ');
         let command: string|undefined = tokens.shift();
@@ -53,17 +54,19 @@ export default class MessageHandler {
             return;
         }
 
-        console.log(process.env.BOT_PREFIX);
-        
+        console.log(this.commands);
 
         if(command.charAt(0) === process.env.BOT_PREFIX){
             command = command.substr(1); //FIXME
-            if(this.commands.hasOwnProperty(command)){
+            if(command === undefined){
+                return;
+            }
+            if(Object.prototype.hasOwnProperty.call(this.commands, command)){
                 let response: number = this.commands[command].execute(msg, tokens);
                 if(response === 0){
-                    msg.channel.send(`> ${this.commands[command].getHelp()}`);
+                    msg.channel.send({ content: `> ${this.commands[command].getHelp()}` });
                 }
             }
-        }*/
+        }
     }
 }
