@@ -10,7 +10,7 @@ export default class MessageHandler {
     commands: {[key: string]: Command};
 
     constructor() {
-        this.commands = this.registerCommands();
+        this.commands = this.registerCommands();        
     }
 
     registerCommands(): {[key: string]: Command} {
@@ -25,41 +25,30 @@ export default class MessageHandler {
             }
 
             let requiredCommand = this.createInstance(commandFile);
-
-            console.log('required command:', requiredCommand);
         });
-
-        console.log('from method:', commands);
 
         return commands;
     }
 
     async createInstance(commandFile: string) {
 
-        let importedFile = new Promise<any>((resolve, reject) => {
-            let command = import(`${__dirname}/commands/${commandFile}`);
-            resolve(command);
-        }).then((command) => {
+        let command = await import(`${__dirname}/commands/${commandFile}`);
             if(typeof command.default == 'undefined'){
                 return new Object();
             }
     
-            let constructorName = Object.keys(command)[0];
+        let constructorName = Object.keys(command)[0];
     
-            let commandInstance: Command = new command[constructorName]();
+        let commandInstance: Command = new command[constructorName]();
     
-            return commandInstance;
-        }).catch((err) => {
-            console.log(err);
-        }); 
+        console.log(commandInstance);
 
-        console.log(importedFile);
-
-
-        return importedFile;
+        return commandInstance;
     }
 
     handle(msg: Message): void {
+
+        console.log(this.commands)
               
         console.log(`${msg.author.username}: ${msg.content}`); 
 
