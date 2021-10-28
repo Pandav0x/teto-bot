@@ -24,23 +24,39 @@ export default class MessageHandler {
                 return;
             }
 
-            let requiredCommand = require(`${__dirname}/commands/${commandFile}`); 
+            let requiredCommand = this.createInstance(commandFile);
 
-            if(!Object.prototype.hasOwnProperty.call(requiredCommand, 'getName')) {
-                return;
-            }
-
-            commands[requiredCommand.getName()] = requiredCommand;
-            if(requiredCommand.getAliases() !== []){
-                requiredCommand.getAliases().forEach((alias: string) => {
-                    commands[alias] = commands[requiredCommand.getName()];
-                });
-            }
+            console.log('required command:', requiredCommand);
         });
 
         console.log('from method:', commands);
 
         return commands;
+    }
+
+    async createInstance(commandFile: string) {
+
+        let importedFile = new Promise<any>((resolve, reject) => {
+            let command = import(`${__dirname}/commands/${commandFile}`);
+            resolve(command);
+        }).then((command) => {
+            if(typeof command.default == 'undefined'){
+                return new Object();
+            }
+    
+            let constructorName = Object.keys(command)[0];
+    
+            let commandInstance: Command = new command[constructorName]();
+    
+            return commandInstance;
+        }).catch((err) => {
+            console.log(err);
+        }); 
+
+        console.log(importedFile);
+
+
+        return importedFile;
     }
 
     handle(msg: Message): void {
@@ -61,11 +77,16 @@ export default class MessageHandler {
             if(command === undefined){
                 return;
             }
-            if(Object.prototype.hasOwnProperty.call(this.commands, command)){
-                let response: number = this.commands[command].execute(msg, tokens);
-                if(response === 0){
-                    msg.channel.send({ content: `> ${this.commands[command].getHelp()}` });
-                }
+
+            console.log(this.commands);
+
+            if(!Object.prototype.hasOwnProperty.call(this.commands, command)){
+                return;
+            }
+            
+            let response: number = this.commands[command].execute(msg, tokens);
+            if(response === 0){
+                msg.channel.send({ content: `> ${this.commands[command].getHelp()}` });
             }
         }
     }
