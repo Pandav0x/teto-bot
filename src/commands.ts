@@ -7,16 +7,16 @@ import Command from './contracts/command';
 
 export default class MessageHandler {
 
-    commands: {[key: string]: Command};
+    commands: Map<string, Command>;
 
     constructor() {
         this.commands = this.registerCommands();        
     }
 
-    registerCommands(): {[key: string]: Command} {
+    registerCommands(): Map<string, Command> {
         console.log('registerCommands');
         
-        let commands: {[key: string]: Command} = {};
+        let commands: Map<string, Command> = new Map<string, Command>();
        
         fs.readdirSync(`${__dirname}/commands`).forEach((commandFile: string) => {
             
@@ -24,7 +24,14 @@ export default class MessageHandler {
                 return;
             }
 
-            let requiredCommand = this.createInstance(commandFile);
+            let commandInstance = this.createInstance(commandFile).then((cmd: Command) => {
+                if(cmd === null){
+                    return;
+                }
+
+                commands.set(cmd.constructor.name, cmd);
+            });
+            
         });
 
         return commands;
@@ -34,12 +41,12 @@ export default class MessageHandler {
 
         let command = await import(`${__dirname}/commands/${commandFile}`);
             if(typeof command.default == 'undefined'){
-                return new Object();
+                return null;
             }
     
         let constructorName = Object.keys(command)[0];
     
-        let commandInstance: Command = new command[constructorName]();
+        let commandInstance: any = new command[constructorName]();
     
         console.log(commandInstance);
 
@@ -47,8 +54,6 @@ export default class MessageHandler {
     }
 
     handle(msg: Message): void {
-
-        console.log(this.commands)
               
         console.log(`${msg.author.username}: ${msg.content}`); 
 
@@ -59,8 +64,6 @@ export default class MessageHandler {
             return;
         }
 
-        console.log(this.commands);
-
         if(command.charAt(0) === process.env.BOT_PREFIX){
             command = command.substr(1); //FIXME
             if(command === undefined){
@@ -69,13 +72,22 @@ export default class MessageHandler {
 
             console.log(this.commands);
 
-            if(!Object.prototype.hasOwnProperty.call(this.commands, command)){
+            console.log(this.constructor.name);
+                
+
+            if(typeof this.commands == 'undefined') {
+                console.log('No commands registered');
+                //this.commands = this.registerCommands(); //FIXME - delgate remove other methods? 
+                return;
+            }
+
+            if(!this.commands.has(command) || typeof this.commands.get(command) == 'undefined'){
                 return;
             }
             
-            let response: number = this.commands[command].execute(msg, tokens);
+            let response: number|undefined = this.commands.get(command)?.execute(msg, tokens);
             if(response === 0){
-                msg.channel.send({ content: `> ${this.commands[command].getHelp()}` });
+                msg.channel.send({ content: `> ${this.commands.get(command)?.getHelp()}` });
             }
         }
     }
