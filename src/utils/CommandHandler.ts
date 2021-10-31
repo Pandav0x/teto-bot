@@ -15,8 +15,7 @@ export default class CommandHandler {
     }
 
     registerCommands(): Map<string, Command> {
-        console.log('registerCommands');
-        
+                
         let commands: Map<string, Command> = new Map<string, Command>();
        
         fs.readdirSync(`${__dirname}/../commands`).forEach((commandFile: string) => {
@@ -30,7 +29,15 @@ export default class CommandHandler {
                     return;
                 }
 
-                commands.set(cmd.constructor.name, cmd);
+                commands.set(cmd.getName(), cmd);
+
+                let commandAliases = cmd.getAliases();
+
+                if(commandAliases.length !== 0){
+                    for(let i = 0; i < commandAliases.length; i++){
+                        commands.set(commandAliases[i], cmd);
+                    }
+                }
             });
             
         });

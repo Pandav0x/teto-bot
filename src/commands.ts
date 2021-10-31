@@ -22,28 +22,25 @@ export default class MessageHandler {
         }
 
         if(command.charAt(0) === process.env.BOT_PREFIX){
-            command = command.substr(1); //FIXME
+            command = command.substr(1);
             if(command === undefined){
                 return;
             }
 
             let registeredCommands = this.commandHandler.getCommands();
-
-            console.log(registeredCommands);
-                
-
+                            
             if(typeof registeredCommands == 'undefined') {
-                console.log('No commands registered');
-                //this.commands = this.registeredCommands(); 
+                console.log('No commands registered.');
                 return;
             }
 
             if(!registeredCommands.has(command) || typeof registeredCommands.get(command) == 'undefined'){
+                console.log(`Command ${command} not found.`);
                 return;
             }
             
             let response: number|undefined = registeredCommands.get(command)?.execute(msg, tokens);
-            if(response === 0){
+            if(response !== 0){
                 msg.channel.send({ content: `> ${registeredCommands.get(command)?.getHelp()}` });
             }
         }

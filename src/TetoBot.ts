@@ -13,5 +13,4 @@ export default class TetoBot extends Client {
         super(options);
         this.messageHandler = new MessageHandler();
     }
-
 }

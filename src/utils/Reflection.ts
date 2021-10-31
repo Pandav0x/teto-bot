@@ -3,9 +3,6 @@ export default class Reflection {
 
     async createInstanceFromClassPath(commandFile: string) {
 
-        console.log(`${__dirname}/../commands/${commandFile}`);
-        
-
         let command = await import(`${__dirname}/../commands/${commandFile}`);
             if(typeof command.default == 'undefined'){
                 return null;
