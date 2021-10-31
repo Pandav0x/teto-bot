@@ -3,7 +3,7 @@
 console.log('Teto is waking up.');
 
 import * as dotenv from "dotenv";
-import TetoBot from "./client";
+import TetoBot from "./TetoBot";
 import { Intents } from "discord.js";
 
 dotenv.config();

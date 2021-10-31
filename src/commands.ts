@@ -1,59 +1,16 @@
 'use strict';
-
 import { Message } from 'discord.js';
-import * as fs from 'fs';
-import * as path from 'path';
-import Command from './contracts/command';
+import CommandHandler from './utils/CommandHandler';
 
 export default class MessageHandler {
 
-    commands: Map<string, Command>;
-
-    constructor() {
-        this.commands = this.registerCommands();        
-    }
-
-    registerCommands(): Map<string, Command> {
-        console.log('registerCommands');
-        
-        let commands: Map<string, Command> = new Map<string, Command>();
-       
-        fs.readdirSync(`${__dirname}/commands`).forEach((commandFile: string) => {
-            
-            if(path.extname(commandFile) === '.map') {
-                return;
-            }
-
-            let commandInstance = this.createInstance(commandFile).then((cmd: Command) => {
-                if(cmd === null){
-                    return;
-                }
-
-                commands.set(cmd.constructor.name, cmd);
-            });
-            
-        });
-
-        return commands;
-    }
-
-    async createInstance(commandFile: string) {
-
-        let command = await import(`${__dirname}/commands/${commandFile}`);
-            if(typeof command.default == 'undefined'){
-                return null;
-            }
-    
-        let constructorName = Object.keys(command)[0];
-    
-        let commandInstance: any = new command[constructorName]();
-    
-        console.log(commandInstance);
-
-        return commandInstance;
-    }
+    commandHandler: CommandHandler|undefined;
 
     handle(msg: Message): void {
+
+        if(typeof this.commandHandler == 'undefined'){
+            this.commandHandler = new CommandHandler();
+        }
               
         console.log(`${msg.author.username}: ${msg.content}`); 
 
@@ -70,24 +27,24 @@ export default class MessageHandler {
                 return;
             }
 
-            console.log(this.commands);
+            let registeredCommands = this.commandHandler.getCommands();
 
-            console.log(this.constructor.name);
+            console.log(registeredCommands);
                 
 
-            if(typeof this.commands == 'undefined') {
+            if(typeof registeredCommands == 'undefined') {
                 console.log('No commands registered');
-                //this.commands = this.registerCommands(); //FIXME - delgate remove other methods? 
+                //this.commands = this.registeredCommands(); 
                 return;
             }
 
-            if(!this.commands.has(command) || typeof this.commands.get(command) == 'undefined'){
+            if(!registeredCommands.has(command) || typeof registeredCommands.get(command) == 'undefined'){
                 return;
             }
             
-            let response: number|undefined = this.commands.get(command)?.execute(msg, tokens);
+            let response: number|undefined = registeredCommands.get(command)?.execute(msg, tokens);
             if(response === 0){
-                msg.channel.send({ content: `> ${this.commands.get(command)?.getHelp()}` });
+                msg.channel.send({ content: `> ${registeredCommands.get(command)?.getHelp()}` });
             }
         }
     }
