@@ -50,7 +50,7 @@ export default class PartyFinder implements Command {
         console.log(formatedArray);
 
         let [tanks, heals, damages] = this.getJobFields(
-            <number|undefined> formatedArray.get('xman'), 
+            <string|undefined> formatedArray.get('xman'), 
             <string|undefined> formatedArray.get('player_comp')
         );
 
@@ -73,14 +73,38 @@ export default class PartyFinder implements Command {
         return 0;
     } 
 
-    getJobFields(xman: number|undefined, player_comp: string|undefined): Array<Object> {
+    getJobFields(xman: string|undefined, player_comp: string|undefined): Array<Object> {
 
         if(typeof xman == 'undefined' || typeof player_comp == 'undefined'){
             return [];
         }
 
-        let [tankNumber, healerNumber, damageNumber] = player_comp.split(',');
+        xman = xman.slice(0, -3);
 
+        let [tankNumber, healerNumber, damageNumber] = new Array(3).fill(0);
+
+        if(player_comp !== ''){
+            [tankNumber, healerNumber, damageNumber] = player_comp.split(',').map(i => Number(i));    
+        }
+
+        if((xman !== '' && Number.isInteger(Number(xman))) && player_comp === '') {
+            switch(Number(xman)){
+                case 24:
+                    tankNumber += 1;
+                    healerNumber += 4;
+                    damageNumber += 11;
+                case 8:
+                    tankNumber += 1;
+                    healerNumber += 1;
+                    damageNumber += 2;
+                case 4:
+                    tankNumber += 1;
+                    healerNumber += 1;
+                    damageNumber += 2;
+                break;
+            }
+        }
+        
         return [
             { name: 'Tank', value: [new Array(tankNumber).fill('-')], inline: true },
             { name: 'Heal', value: [new Array(healerNumber).fill('-')], inline: true },
