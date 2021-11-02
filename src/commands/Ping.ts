@@ -1,7 +1,7 @@
 'use strict';
 
 import { Message } from "discord.js";
-import Command from "../contracts/command";
+import Command from "../contracts/Command";
 
 export default class Ping implements Command {
     getName(): string {

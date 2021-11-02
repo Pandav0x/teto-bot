@@ -1,2 +1,2 @@
-export * from "./ping";
-export * from "./party-finder";
+export * from "./Ping";
+export * from "./PartyFinder";

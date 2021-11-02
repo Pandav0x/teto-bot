@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import Command from "../contracts/command";
+import Command from "../contracts/Command";
 import Reflection from "./Reflection";
 
 export default class CommandHandler {
