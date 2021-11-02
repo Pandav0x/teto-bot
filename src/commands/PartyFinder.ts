@@ -2,6 +2,7 @@
 
 import { Message, MessageEmbed } from "discord.js";
 import Command from "../contracts/Command";
+import { Emoji } from "../utils/Emoji";
 
 export default class PartyFinder implements Command {
     getName(): string {
@@ -49,31 +50,53 @@ export default class PartyFinder implements Command {
 
         console.log(formatedArray);
 
-        let [tanks, heals, damages] = this.getJobFields(
+        let [tankNumber, healerNumber, damageNumber] = this.getJobFields(
             <string|undefined> formatedArray.get('xman'), 
             <string|undefined> formatedArray.get('player_comp')
         );
 
-        console.log('t/h/d: ', tanks, heals, damages);
+        console.log('t/h/d: ', tankNumber, healerNumber, damageNumber);
 
         let embedMessage = new MessageEmbed()
             .setColor('#0099ff')
             .setTitle(<string> formatedArray.get('description'))
             .setDescription('jalsdjlsjdlaj')
-            .addField('Inline field title', 'Some value here', true)
-            .addField('Inline field title', 'Some value here', true)
-            .addField('Inline field title', 'Some value here', true)
-            .addField('Inline field title', 'Some value here', true)
             .setThumbnail('https://static.wikia.nocookie.net/nausicaa/images/a/a4/Fox_squirrel.gif/revision/latest?cb=20100605225647')
             .setDescription('Your group is looking for the following members:')
-            .setFooter(`created by ${msg?.member?.displayName}`);
+            .setFooter(`Created by ${msg?.member?.displayName}.`);
 
-        msg.channel.send({ embeds: [embedMessage] });
+        if(tankNumber !== 0){
+            embedMessage.addField(`${ Emoji.TANK } Tanks`, new String('\n-').repeat(tankNumber), true);
+        }
+
+        if(healerNumber !== 0){
+            embedMessage.addField(`${ Emoji.HEALER } Healers`, new String('\n-').repeat(tankNumber), true);
+        }
+
+        if(damageNumber !== 0){
+            embedMessage.addField(`${ Emoji.DPS } Dps`, new String('\n-').repeat(tankNumber), true);
+        }
+
+        msg.channel.send({ embeds: [embedMessage] }).then(message => {
+            if(tankNumber !== 0){
+                message.react(`${ Emoji.TANK }`);
+            }
+    
+            if(healerNumber !== 0){
+                message.react(`${ Emoji.HEALER }`);
+            }
+    
+            if(damageNumber !== 0){
+                message.react(`${ Emoji.DPS }`);
+            }
+
+            message.react(`${ Emoji.BIN }`);
+        });
 
         return 0;
     } 
 
-    getJobFields(xman: string|undefined, player_comp: string|undefined): Array<Object> {
+    getJobFields(xman: string|undefined, player_comp: string|undefined): Array<number> {
 
         if(typeof xman == 'undefined' || typeof player_comp == 'undefined'){
             return [];
@@ -105,10 +128,6 @@ export default class PartyFinder implements Command {
             }
         }
         
-        return [
-            { name: 'Tank', value: [new Array(tankNumber).fill('-')], inline: true },
-            { name: 'Heal', value: [new Array(healerNumber).fill('-')], inline: true },
-            { name: 'Damage', value: [new Array(damageNumber).fill('-')], inline: true }
-        ];
+        return [tankNumber, healerNumber, damageNumber];
     }
 };
