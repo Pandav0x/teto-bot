@@ -10,6 +10,8 @@ services:
     volumes:
       - ./build:/teto/build
       - ./node_modules:/teto/build/node_modules
+      - ./databases:/teto/databases
+      - ./schemas:/teto/schemas
     networks:
       - backend
     environment:

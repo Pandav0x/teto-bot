@@ -1,6 +1,7 @@
 'use strict';
 
 import { Database, OPEN_READWRITE, OPEN_CREATE } from "sqlite3";
+import 'dotenv/config';
 
 export default class GuildDatabase {
     db: Database|null = null;
@@ -14,7 +15,7 @@ export default class GuildDatabase {
 
     connect(): GuildDatabase {
         if(this.db === null){
-            this.db = new Database(`./databases/${this.name}`, OPEN_READWRITE | OPEN_CREATE);
+            this.db = new Database(`${__dirname}/../../databases/${this.name}`, OPEN_READWRITE | OPEN_CREATE);
         }
         return this;
     }
