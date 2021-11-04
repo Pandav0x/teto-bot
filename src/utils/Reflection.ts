@@ -1,7 +1,7 @@
 export default class Reflection {
     constructor() {}
 
-    async createInstanceFromClassPath(commandFile: string) {
+    async createInstanceFromClassPath(commandFile: string, ...args: any|null) {
 
         let command = await import(`${__dirname}/../commands/${commandFile}`);
             if(typeof command.default == 'undefined'){
@@ -10,7 +10,7 @@ export default class Reflection {
     
         let constructorName = Object.keys(command)[0];
     
-        let commandInstance: any = new command[constructorName]();
+        let commandInstance: any = new command[constructorName](...args);
     
         console.log(commandInstance);
 

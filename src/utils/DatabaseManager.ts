@@ -12,6 +12,8 @@ export default class DatabaseManager {
 
     connectAllDatabases(client: Client){
 
+        console.log('Connecting all databases.');        
+
         let botGuilds: string[] = client.guilds.cache.map(guild => guild.id);
 
         for(let i=0; i < botGuilds.length; i++){

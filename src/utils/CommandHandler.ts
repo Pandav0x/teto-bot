@@ -1,17 +1,21 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import Command from "../contracts/Command";
+import TetoBot from '../TetoBot';
 import Reflection from "./Reflection";
 
 export default class CommandHandler {
 
     commands: Map<string, Command>;
 
+    client: TetoBot;
+
     hasRegistered: boolean;
 
-    constructor(){
+    constructor(client: TetoBot){
         this.hasRegistered = false;
         this.commands = new Map<string, Command>();
+        this.client = client;
     }
 
     registerCommands(): Map<string, Command> {
@@ -24,7 +28,7 @@ export default class CommandHandler {
                 return;
             }
 
-            let commandInstance = (new Reflection()).createInstanceFromClassPath(commandFile).then((cmd: Command) => {
+            let commandInstance = (new Reflection()).createInstanceFromClassPath(commandFile, this.client).then((cmd: Command) => {
                 if(cmd === null){
                     return;
                 }
@@ -39,7 +43,6 @@ export default class CommandHandler {
                     }
                 }
             });
-            
         });
 
         this.hasRegistered = true
