@@ -20,17 +20,10 @@ export default class DatabaseManager {
             this.initializeDatabase(guildDatabase);
 
             this.databasesPool.set(botGuilds[i], guildDatabase);
-
-        }
-
-        console.log(this.databasesPool);
-        
+        }        
     }
 
-    initializeDatabase(database: GuildDatabase): void {
-
-        console.log('executing query');
-        
+    initializeDatabase(database: GuildDatabase): void {        
 
         database.db?.all(`SELECT name FROM sqlite_master WHERE type='table' AND name='general_info';`, [], (err, rows) => {
             if (err) {
@@ -38,6 +31,8 @@ export default class DatabaseManager {
             }
 
             if(rows.length === 0){
+
+                console.log(`Initializing ${database.getName()}.`);
 
                 let baseSchemaFile: Buffer = fs.readFileSync(`${__dirname}/../../schemas/base-schema.sql`);
 
