@@ -39,8 +39,30 @@ export default class DatabaseManager {
                 let baseSchemaFile: Buffer = fs.readFileSync(`${__dirname}/../../schemas/base-schema.sql`);
 
                 database.db?.exec(baseSchemaFile.toString());
+                
+                let shemasFiles: string[] = fs.readdirSync(`${__dirname}/../../schemas/`);
+
+                for(let i = 0; i < shemasFiles.length; i++){
+                    let commandSchema: Buffer = fs.readFileSync(`${__dirname}/../../schemas/${shemasFiles[i]}`);
+                    database.db?.exec(commandSchema.toString());
+                }                
             }
-        }  
-        );
+        });
+    }
+
+    getDatabase(guildId: String|null): GuildDatabase|null {
+        if(guildId === null){
+            return null;
+        }
+        
+        if(this.databasesPool.has(guildId)){
+            let guildDatabase: GuildDatabase|undefined = this.databasesPool.get(guildId);
+            if(typeof guildDatabase == 'undefined'){
+                return null;
+            }
+            return guildDatabase;
+        }
+
+        return null;
     }
 }

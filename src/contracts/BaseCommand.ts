@@ -1,11 +1,10 @@
-import { Client } from "discord.js";
-import Command from "./Command";
+import TetoBot from "../TetoBot";
 
 export default class BaseCommand {
     
-    client: Client;
+    client: TetoBot;
     
-    constructor(client: Client){
+    constructor(client: TetoBot){
         this.client = client;
     }
 }
