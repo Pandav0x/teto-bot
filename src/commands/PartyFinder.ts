@@ -4,9 +4,13 @@ import { Message, MessageEmbed } from "discord.js";
 import BaseCommand from "../contracts/BaseCommand";
 import Command from "../contracts/Command";
 import { Emoji } from "../utils/Emoji";
+import TetoMessage from "../utils/TetoMessage";
 import { TimeZone } from "../utils/TimeZone";
 
 export default class PartyFinder extends BaseCommand implements Command {
+
+    isRecordable: boolean = true;
+
     getName(): string {
         return 'partyfinder';
     }
@@ -79,7 +83,9 @@ export default class PartyFinder extends BaseCommand implements Command {
             embedMessage.addField(`${ Emoji.DPS } Dps`, new String('\n-').repeat(damageNumber), true);
         }
 
-        msg.channel.send({ embeds: [embedMessage] }).then(message => {
+        let a = new TetoMessage(msg, this);
+
+        a.send({ embeds: [embedMessage] }).then(message => {
             if(tankNumber !== 0){
                 message.react(`${ Emoji.TANK }`);
             }

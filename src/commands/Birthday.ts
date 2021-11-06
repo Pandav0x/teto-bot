@@ -6,6 +6,9 @@ import Command from "../contracts/Command";
 import GuildDatabase from "../utils/GuildDatabase";
 
 export default class Birthday extends BaseCommand implements Command {
+
+    isRecordable: boolean = true;
+
     getName(): string {
         return 'birthday';
     };
@@ -28,6 +31,8 @@ export default class Birthday extends BaseCommand implements Command {
         }
 
         console.log(guildDatabase);
+
+        guildDatabase.db?.exec(`INSERT INTO birthday () VALUES ()`);
 
         return 0;
     }
