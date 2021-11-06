@@ -34,6 +34,8 @@ export default class DatabaseManager {
 
             if(rows.length === 0){
 
+                //TODO - clean here
+
                 console.log(`Initializing ${database.getName()}.`);
 
                 let baseSchemaFile: Buffer = fs.readFileSync(`${__dirname}/../../schemas/base-schema.sql`);
