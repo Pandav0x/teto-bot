@@ -49,7 +49,7 @@ export default class CommandHandler {
         return commands;
     }
 
-    getCommands() {
+    getCommands(): Map<string, Command> {
         if(!this.hasRegistered){
             this.commands = this.registerCommands();
         }

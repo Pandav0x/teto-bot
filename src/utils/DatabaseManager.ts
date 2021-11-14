@@ -11,7 +11,7 @@ export default class DatabaseManager {
         this.databasesPool = new Map<String, GuildDatabase>();
     }
 
-    connectAllDatabases(client: Client){
+    connectAllDatabases(client: Client): void {
 
         console.log('Connecting all databases.');        
 
