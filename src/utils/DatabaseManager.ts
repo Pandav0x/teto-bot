@@ -25,28 +25,40 @@ export default class DatabaseManager {
         }        
     }
 
-    initializeDatabase(database: GuildDatabase): void {        
+    initializeDatabase(database: GuildDatabase): void { 
+        
+        console.log(`Intializing DBs`);
 
         database.db?.all(`SELECT name FROM sqlite_master WHERE type='table' AND name='general_info';`, [], (err, rows) => {
             if (err) {
+                console.log('omegalul');
+                
                 throw err;
             }
 
             if(rows.length === 0){
 
-                //TODO - clean here
+                //TODO - clean here (maybe a Set ?)
 
                 console.log(`Initializing ${database.getName()}.`);
 
                 let baseSchemaFile: Buffer = fs.readFileSync(`${__dirname}/../../schemas/base-schema.sql`);
 
-                database.db?.exec(baseSchemaFile.toString());
+                database.db?.exec(baseSchemaFile.toString(), err => {
+                    if(err !== null){
+                        console.error(`Error while executing: '${baseSchemaFile.toString()}'\n${err}`);
+                    }
+                });
                 
                 let shemasFiles: string[] = fs.readdirSync(`${__dirname}/../../schemas/`);
 
                 for(let i = 0; i < shemasFiles.length; i++){
-                    let commandSchema: Buffer = fs.readFileSync(`${__dirname}/../../schemas/${shemasFiles[i]}`);
-                    database.db?.exec(commandSchema.toString());
+                    let commandSchema: Buffer = fs.readFileSync(`${__dirname}/../../schemas/${shemasFiles[i]}`);  
+                    database.db?.exec(commandSchema.toString(), err => {
+                        if(err !== null){
+                            console.error(`Error while executing: '${commandSchema.toString()}'\n${err}`);
+                        }
+                    });
                 }                
             }
         });

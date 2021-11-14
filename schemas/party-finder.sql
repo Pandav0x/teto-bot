@@ -1,1 +1,1 @@
-CREATE TABLE IF NOT EXISTS partyfinder (id INTEGER PRIMARY KEY AUTOINCREMENT, date DATETIME, raid_json TEXT, announce_channel_id TEXT);
+CREATE TABLE IF NOT EXISTS partyfinder (id INTEGER PRIMARY KEY NOT NULL, raid_date DATETIME, raid_json TEXT, announcement_channel_id TEXT);
