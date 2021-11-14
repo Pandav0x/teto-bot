@@ -26,4 +26,11 @@ export default class TetoMessage {
             return message;
         });
     }
+
+    serialize(): string {
+        
+        
+        
+        return '';
+    }
 }

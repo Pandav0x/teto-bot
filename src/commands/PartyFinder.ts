@@ -89,11 +89,11 @@ export default class PartyFinder extends BaseCommand implements Command {
             if(tankNumber !== 0){
                 message.react(`${ Emoji.TANK }`);
             }
-    
+
             if(healerNumber !== 0){
                 message.react(`${ Emoji.HEALER }`);
             }
-    
+
             if(damageNumber !== 0){
                 message.react(`${ Emoji.DPS }`);
             }
@@ -135,7 +135,7 @@ export default class PartyFinder extends BaseCommand implements Command {
                 break;
             }
         }
-        
+
         return [tankNumber, healerNumber, damageNumber];
     }
 
