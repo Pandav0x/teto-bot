@@ -1,12 +1,12 @@
 version: "3"
 services:
-  node-server:
-    build: .docker/node-server
+  bot-server:
+    build: .docker/bot-server
     #restart: always
     working_dir: /teto/build/
     depends_on:
       - redis
-      - node-typescript
+      - bot-typescript
     volumes:
       - ./build:/teto/build
       - ./node_modules:/teto/build/node_modules
@@ -20,8 +20,8 @@ services:
       - BOT_PREFIX=$BOT_PREFIX
       - REDIS_URL=redis://127.0.0.1:6379
     command: node teto.js
-  node-typescript:
-    build: .docker/node-typescript
+  bot-typescript:
+    build: .docker/bot-typescript
     working_dir: /teto
     volumes: 
       - ./src:/teto/src
