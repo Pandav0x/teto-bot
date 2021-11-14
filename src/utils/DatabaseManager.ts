@@ -1,6 +1,7 @@
 import { Client } from "discord.js";
 import GuildDatabase from "./GuildDatabase";
 import * as fs from 'fs';
+import * as readline from 'readline';
 
 export default class DatabaseManager {
 
@@ -26,39 +27,33 @@ export default class DatabaseManager {
     }
 
     initializeDatabase(database: GuildDatabase): void { 
-        
-        console.log(`Intializing DBs`);
-
-        database.db?.all(`SELECT name FROM sqlite_master WHERE type='table' AND name='general_info';`, [], (err, rows) => {
-            if (err) {
-                console.log('omegalul');
-                
+        database.db?.all(`SELECT name FROM sqlite_master WHERE type='table' AND name='general_info';`, [], async (err, rows) => {
+            if (err) {                
                 throw err;
             }
 
             if(rows.length === 0){
 
-                //TODO - clean here (maybe a Set ?)
-
                 console.log(`Initializing ${database.getName()}.`);
 
-                let baseSchemaFile: Buffer = fs.readFileSync(`${__dirname}/../../schemas/base-schema.sql`);
+                let queryFiles: Set<string> = new Set<string>(['base-schema.sql', ...fs.readdirSync(`${__dirname}/../../schemas/`)]);
 
-                database.db?.exec(baseSchemaFile.toString(), err => {
-                    if(err !== null){
-                        console.error(`Error while executing: '${baseSchemaFile.toString()}'\n${err}`);
-                    }
-                });
-                
-                let shemasFiles: string[] = fs.readdirSync(`${__dirname}/../../schemas/`);
+                for(let i = 0; i < [...queryFiles].length; i++){
 
-                for(let i = 0; i < shemasFiles.length; i++){
-                    let commandSchema: Buffer = fs.readFileSync(`${__dirname}/../../schemas/${shemasFiles[i]}`);  
-                    database.db?.exec(commandSchema.toString(), err => {
-                        if(err !== null){
-                            console.error(`Error while executing: '${commandSchema.toString()}'\n${err}`);
-                        }
+                    let readlineInterface = readline.createInterface({
+                        input: fs.createReadStream(`${__dirname}/../../schemas/${[...queryFiles][i]}`),
+                        crlfDelay: Infinity
                     });
+
+                    for await (let line of readlineInterface){                       
+                        database.db?.exec(line, err => {
+                            if(err !== null){
+                                console.error(`Error while executing: '${line}'\n${err}`);
+                            }
+                        });
+                    }
+
+
                 }                
             }
         });
