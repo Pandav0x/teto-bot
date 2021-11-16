@@ -1,6 +1,6 @@
 'use strict';
 
-import { Message, MessageEmbed, MessageReaction, PartialMessageReaction, PartialUser, ReactionCollector, User } from "discord.js";
+import { EmbedField, Message, MessageEmbed, MessageReaction, PartialMessageReaction, PartialUser, ReactionCollector, User } from "discord.js";
 import Command from "../contracts/Command";
 import Reactable from "../contracts/Reactable";
 import { Emoji } from "../utils/Emoji";
@@ -207,7 +207,51 @@ export default class PartyFinder extends Command implements Reactable {
             reactionOrigin.message.delete();
         }
 
+        if(reactionOrigin.emoji.toString() === Emoji.TANK){
+            let freeSpots = this.getFreeSpots(reactionOrigin.message.embeds[0].fields, 'tank', user);
+            
+            if(freeSpots === 0){
+                reactionOrigin.remove();
+            }
+
+            
+        }
+
+        if(reactionOrigin.emoji.toString() === Emoji.HEALER){
+
+        }
+
+        if(reactionOrigin.emoji.toString() === Emoji.DPS){
+
+        }
+
 
         console.log(`reaction by ${user.username}`);
+    }
+
+    getFreeSpots(fields: EmbedField[], job: string, user: User | PartialUser) {        
+        let field: EmbedField | undefined;
+
+        let jobRegex = new RegExp(`^.*${job.toLocaleLowerCase()}.*$`, 'ig')
+
+        console.log(jobRegex.source);
+        
+
+        for(let i = 0; i < fields.length; i++){
+            if(jobRegex.test(fields[i].name)){
+                field = fields[i];
+            }
+        }
+
+        if(typeof field == 'undefined'){
+            return 0;
+        }
+
+        let freeSpots = field.value.split('\n').filter(e => e === '-');
+
+
+        if(freeSpots.length === 0){
+            return 0;
+        }
     }
 };
