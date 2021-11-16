@@ -66,7 +66,7 @@ export default class TetoBot extends Client {
 
             let date = new Date();
 
-            console.log(`[${date.getUTCHours()}:${date.getUTCMinutes().toString().padStart(2, '0')}:${date.getUTCSeconds().toString().padStart(2, '0')}]${this.user?.username} reacted with ${reaction_orig.emoji.toString()}`)
+            console.log(`[${date.getUTCHours()}:${date.getUTCMinutes().toString().padStart(2, '0')}:${date.getUTCSeconds().toString().padStart(2, '0')}]${this.user?.username} reacted with ${reaction_orig.emoji.toString()}`);
 
             this.databaseManager.getDatabase(reaction_orig.message.guildId)?.db?.all(`SELECT * FROM command WHERE teto_message_id=${reaction_orig.message.id}`, [], async (err, rows) => {
                 if(err){
