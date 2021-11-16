@@ -202,6 +202,12 @@ export default class PartyFinder extends Command implements Reactable {
     }
 
     reacted(reactionOrigin: MessageReaction | PartialMessageReaction, user: User | PartialUser): void {
+
+        if(reactionOrigin.emoji.toString() === Emoji.BIN){
+            reactionOrigin.message.delete();
+        }
+
+
         console.log(`reaction by ${user.username}`);
     }
 };
