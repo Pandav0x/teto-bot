@@ -11,8 +11,6 @@ export default class Reflection {
         let constructorName = Object.keys(command)[0];
     
         let commandInstance: any = new command[constructorName](...args);
-    
-        console.log(commandInstance);
 
         return commandInstance;
     }

@@ -28,7 +28,7 @@ export default class CommandHandler {
                 return;
             }
 
-            let commandInstance = (new Reflection()).createInstanceFromClassPath(commandFile, this.client).then((cmd: Command) => {
+            (new Reflection()).createInstanceFromClassPath(commandFile, this.client).then((cmd: Command) => {
                 if(cmd === null){
                     return;
                 }

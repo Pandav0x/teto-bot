@@ -52,8 +52,6 @@ export default class PartyFinder extends BaseCommand implements Command {
             formatedArray.set(arg.name, arg.value ?? '');
         }));
 
-        console.log(formatedArray);
-
         let [tankNumber, healerNumber, damageNumber] = this.getJobFields(
             <string|undefined> formatedArray.get('xman'), 
             <string|undefined> formatedArray.get('player_comp')

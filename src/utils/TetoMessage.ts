@@ -18,6 +18,8 @@ export default class TetoMessage {
             if(this.caller.isRecordable){
                 let db = this.caller.client.databaseManager.getDatabase(this.message.guildId);
     
+                //console.log(message.content);
+
                 if(db !== null){
                     db.db?.exec(`INSERT INTO command (teto_message_id, teto_message_content, user_id, user_message_id) VALUES (${message.id}, ${JSON.stringify(message.content)}, ${this.message.author.id}, ${this.message.id});`)
                 }
