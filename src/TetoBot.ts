@@ -61,14 +61,14 @@ export default class TetoBot extends Client {
         }
     }
 
-    handleReaction(reaction_orig: MessageReaction | PartialMessageReaction , user: User | PartialUser) {       
-        if(reaction_orig.message.author?.id === this.user?.id){
+    handleReaction(reactionOrigin: MessageReaction | PartialMessageReaction , user: User | PartialUser) {       
+        if(reactionOrigin.message.author?.id === this.user?.id){
 
             let date = new Date();
 
-            console.log(`[${date.getUTCHours()}:${date.getUTCMinutes().toString().padStart(2, '0')}:${date.getUTCSeconds().toString().padStart(2, '0')}]${this.user?.username} reacted with ${reaction_orig.emoji.toString()}`);
+            console.log(`[${date.getUTCHours()}:${date.getUTCMinutes().toString().padStart(2, '0')}:${date.getUTCSeconds().toString().padStart(2, '0')}]${this.user?.username} reacted with ${reactionOrigin.emoji.toString()}`);
 
-            this.databaseManager.getDatabase(reaction_orig.message.guildId)?.db?.all(`SELECT * FROM command WHERE teto_message_id=${reaction_orig.message.id}`, [], async (err, rows) => {
+            this.databaseManager.getDatabase(reactionOrigin.message.guildId)?.db?.all(`SELECT * FROM command WHERE teto_message_id=${reactionOrigin.message.id}`, [], async (err, rows) => {
                 if(err){
                     return;
                 }
@@ -83,7 +83,7 @@ export default class TetoBot extends Client {
                     return;
                 }
 
-                command.reacted(reaction_orig, user);
+                command.reacted(reactionOrigin, user);
             });
         }
     }
