@@ -5,7 +5,7 @@ import Command from "../contracts/Command";
 import Reactable from "../contracts/Reactable";
 import DateTools from "../utils/DateTools";
 import { Emoji } from "../utils/Emoji";
-import PFEmbedBuilder from "../utils/PFEmberBuilder";
+import PFEmbedBuilder from "../utils/PFEmbedBuilder";
 import TetoMessage from "../utils/TetoMessage";
 import { TimeZone } from "../utils/TimeZone";
 
@@ -127,6 +127,10 @@ export default class PartyFinder extends Command implements Reactable {
     }
 
     reacted(reactionOrigin: MessageReaction | PartialMessageReaction, user: User | PartialUser): void {
+
+        console.log(reactionOrigin.message.embeds[0]);
+
+        PFEmbedBuilder.instanciateFromMessage(reactionOrigin.message.embeds[0])
 
         if(reactionOrigin.emoji.toString() === Emoji.BIN){
             reactionOrigin.message.delete();

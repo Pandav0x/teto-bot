@@ -1,4 +1,5 @@
-import { MessageEmbed, User } from 'discord.js';
+import { EmbedField, MessageEmbed, User } from 'discord.js';
+import BaseConverter from './BaseConverter';
 import DateTools from './DateTools';
 import { Emoji } from './Emoji';
 
@@ -105,6 +106,13 @@ export default class PFEmbedBuilder {
         return this;
     }
 
+    setColor(color: string): PFEmbedBuilder {
+        if((<any>Object).values(PFEmbedColor).includes(color)){
+            this.color = <any>color as PFEmbedColor;
+        }
+        return this;
+    }
+
     setDate(date: Date): PFEmbedBuilder {
         this.date = date;
         return this;
@@ -168,10 +176,42 @@ export default class PFEmbedBuilder {
         let leftoverSpots: Array<string> = new Array<string>(jobSpotsMax - jobSpotsTaken.length).fill('-');
         return [...spots, ...leftoverSpots].join('\n');
     }
+
+    static instanciateFromMessage(message: MessageEmbed): PFEmbedBuilder {
+        
+        let embed = new PFEmbedBuilder();
+        
+        embed.setTitle(message.title ?? 'Title')
+            .setColor(`#${(new BaseConverter().dec2hex(message.color ?? 0, 6))}`)
+            .setFooter(message.footer?.text ?? '')
+            this.getDateFromField(message.fields)
+        
+        return embed;
+    }
+
+    static getDateFromField(fields: EmbedField[]) {
+        for(let i = 0; i < fields.length; i++){
+            if(fields[i].name.toLowerCase() === 'time'){
+                let regex = new RegExp('(?<=(\\*\\*))([a-zA-z0-9\\s,])+?(?=(\\*\\*))', 'igm');
+                
+                let a = fields[i].value.matchAll(regex);
+
+                console.log(...a);
+                
+
+                return '';
+            }
+        }
+        return null;
+    }
+
+    static getJobFields(fields: EmbedField[]) {
+
+    }
 }
 
 enum PFEmbedColor {
-    PENDING = '#0099ff',
-    SUCCESS = '#63f542',
-    FAILURE = '#f54242'
+    PENDING = <any>'#0099ff',
+    SUCCESS = <any>'#63f542',
+    FAILURE = <any>'#f54242'
 }

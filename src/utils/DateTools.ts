@@ -1,5 +1,7 @@
 import { TimeZone } from "./TimeZone";
 
+//TODO - change to TetoDate
+
 export default class DateTools {
     timeTo24Hours(time: String|undefined): number {
 
