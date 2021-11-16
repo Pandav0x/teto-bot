@@ -1,10 +1,9 @@
 'use strict';
 
 import { Message } from "discord.js";
-import BaseCommand from "../contracts/BaseCommand";
 import Command from "../contracts/Command";
 
-export default class Ping extends BaseCommand implements Command {
+export default class Ping extends Command {
     getName(): string {
         return 'ping';
     };

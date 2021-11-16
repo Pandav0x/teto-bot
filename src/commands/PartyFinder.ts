@@ -1,13 +1,12 @@
 'use strict';
 
 import { Message, MessageEmbed } from "discord.js";
-import BaseCommand from "../contracts/BaseCommand";
 import Command from "../contracts/Command";
 import { Emoji } from "../utils/Emoji";
 import TetoMessage from "../utils/TetoMessage";
 import { TimeZone } from "../utils/TimeZone";
 
-export default class PartyFinder extends BaseCommand implements Command {
+export default class PartyFinder extends Command {
 
     isRecordable: boolean = true;
 
