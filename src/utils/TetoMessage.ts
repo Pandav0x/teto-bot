@@ -1,6 +1,6 @@
 import { Base, Message, MessageOptions, MessagePayload } from "discord.js";
 import { Statement } from "sqlite3";
-import BaseCommand from "../contracts/BaseCommand";
+import BaseCommand from "../contracts/Command";
 
 export default class TetoMessage {
 
