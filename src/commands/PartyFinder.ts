@@ -3,7 +3,9 @@
 import { EmbedField, Message, MessageEmbed, MessageReaction, PartialMessageReaction, PartialUser, ReactionCollector, User } from "discord.js";
 import Command from "../contracts/Command";
 import Reactable from "../contracts/Reactable";
+import DateTools from "../utils/DateTools";
 import { Emoji } from "../utils/Emoji";
+import PFEmbedBuilder from "../utils/PFEmberBuilder";
 import TetoMessage from "../utils/TetoMessage";
 import { TimeZone } from "../utils/TimeZone";
 
@@ -52,47 +54,34 @@ export default class PartyFinder extends Command implements Reactable {
             formatedArray.set(arg.name, arg.value ?? '');
         }));
 
-        let [tankNumber, healerNumber, damageNumber] = this.getJobFields(
+        let [tanksNumber, healersNumber, damagesNumber] = this.getJobFields(
             <string|undefined> formatedArray.get('xman'), 
             <string|undefined> formatedArray.get('player_comp')
         );
 
-        let date: Date = this.parseDate(<string>formatedArray.get('date'), <string>formatedArray.get('time'), <string>formatedArray.get('timezone'));
+        let dt = new DateTools();
+
+        let date: Date = dt.parseDate(<string>formatedArray.get('date'), <string>formatedArray.get('time'), <string>formatedArray.get('timezone'));
 
         // Embed message creation
-        let embedMessage = new MessageEmbed()
-            .setColor('#0099ff')
-            .setTitle(<string> formatedArray.get('description'))
-            .setThumbnail('https://static.wikia.nocookie.net/nausicaa/images/a/a4/Fox_squirrel.gif/revision/latest?cb=20100605225647')
-            .setDescription('Your group is looking for the following members:')
-            .addField('Time', `On the **${this.formatDate(date)}** at **${this.timeTo12Hours(date.getUTCHours())} ST**`)
+        let embedMessage = new PFEmbedBuilder();
+        embedMessage.setTitle(<string> formatedArray.get('description'))
+            .setDate(date)
             .setFooter(`Created by ${msg?.member?.displayName}.`)
-            .setTimestamp();
-
-        if(tankNumber !== 0){
-            embedMessage.addField(`${ Emoji.TANK } Tanks`, new String('\n-').repeat(tankNumber), true);
-        }
-
-        if(healerNumber !== 0){
-            embedMessage.addField(`${ Emoji.HEALER } Healers`, new String('\n-').repeat(healerNumber), true);
-        }
-
-        if(damageNumber !== 0){
-            embedMessage.addField(`${ Emoji.DPS } Dps`, new String('\n-').repeat(damageNumber), true);
-        }
+            .setTHDNumbers(tanksNumber, healersNumber, damagesNumber);
 
         let a = new TetoMessage(msg, this);
 
-        a.send({ embeds: [embedMessage] }).then(message => {
-            if(tankNumber !== 0){
+        a.send({ embeds: [embedMessage.getEmbed()] }).then(message => {
+            if(tanksNumber !== 0){
                 message.react(`${ Emoji.TANK }`);
             }
 
-            if(healerNumber !== 0){
+            if(healersNumber !== 0){
                 message.react(`${ Emoji.HEALER }`);
             }
 
-            if(damageNumber !== 0){
+            if(damagesNumber !== 0){
                 message.react(`${ Emoji.DPS }`);
             }
 
@@ -137,70 +126,6 @@ export default class PartyFinder extends Command implements Reactable {
         return [tankNumber, healerNumber, damageNumber];
     }
 
-    timeTo24Hours(time: String|undefined): number{
-
-        if(typeof time == 'undefined'){
-            return new Date().getTime();
-        }
-                
-        let abbreviation: string = time.substr(-2).toLowerCase();
-        let hour: number = Number(time.slice(0, -2));
-
-        if(abbreviation === 'pm'){
-            hour += 12;
-        }
-
-        hour %= 24;
-
-        return hour;
-    }
-
-    timeTo12Hours(time: number):String {
-        return `${time%12}${(time < 12)? 'am' : 'pm'}`;
-    }
-
-    getHoursMinutes(date: Date): string {
-        return `${date.getHours()}:${date.getMinutes()}`;
-    }
-
-    formatDate(date: Date): string {
-        return date.toLocaleDateString('en-uk', {
-            day: '2-digit',
-            weekday: 'short',
-            month: 'short',
-            year: 'numeric'
-        })
-    }
-
-    parseDate(date: string|undefined, time: string|undefined, timeZone: string|undefined): Date {
-
-        if(typeof date == 'undefined' && typeof time == 'undefined'){
-            return new Date();
-        }
-
-        if(typeof timeZone == 'undefined' || timeZone.toUpperCase() === 'ST'){
-            timeZone = 'GMT';
-        }
-
-        timeZone = timeZone.toUpperCase();
-
-        let timeZoneOffset = '+0:00';
-
-        if(TimeZone.hasOwnProperty(timeZone)) {
-            timeZoneOffset = TimeZone[timeZone as keyof typeof TimeZone];
-        }
-        
-        let d = new Date(Date.parse(<string>date));
-
-        let e = new Date(`${d.getUTCFullYear()}-${d.getMonth()}-${d.getUTCDate()} ${this.timeTo24Hours(time)}:00:00.000 GMT${timeZoneOffset}`);
-        
-        return e;
-    }
-
-    formatTime(date: Date): string {
-        return `${date.getUTCDay()} ${date.getDay()} ${date.getFullYear()}`;
-    }
-
     reacted(reactionOrigin: MessageReaction | PartialMessageReaction, user: User | PartialUser): void {
 
         if(reactionOrigin.emoji.toString() === Emoji.BIN){
@@ -214,15 +139,15 @@ export default class PartyFinder extends Command implements Reactable {
                 reactionOrigin.remove();
             }
 
-            
+            //TODO
         }
 
         if(reactionOrigin.emoji.toString() === Emoji.HEALER){
-
+            //TODO
         }
 
         if(reactionOrigin.emoji.toString() === Emoji.DPS){
-
+            //TODO
         }
 
 
