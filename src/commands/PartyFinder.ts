@@ -1,12 +1,13 @@
 'use strict';
 
-import { Message, MessageEmbed } from "discord.js";
+import { Message, MessageEmbed, MessageReaction, PartialMessageReaction, PartialUser, ReactionCollector, User } from "discord.js";
 import Command from "../contracts/Command";
+import Reactable from "../contracts/Reactable";
 import { Emoji } from "../utils/Emoji";
 import TetoMessage from "../utils/TetoMessage";
 import { TimeZone } from "../utils/TimeZone";
 
-export default class PartyFinder extends Command {
+export default class PartyFinder extends Command implements Reactable {
 
     isRecordable: boolean = true;
 
@@ -198,5 +199,9 @@ export default class PartyFinder extends Command {
 
     formatTime(date: Date): string {
         return `${date.getUTCDay()} ${date.getDay()} ${date.getFullYear()}`;
+    }
+
+    reacted(reactionOrigin: MessageReaction | PartialMessageReaction, user: User | PartialUser): void {
+        console.log(`reaction by ${user.username}`);
     }
 };

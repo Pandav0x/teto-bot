@@ -4,7 +4,7 @@ console.log('Teto is waking up.');
 
 import * as dotenv from "dotenv";
 import TetoBot from "./TetoBot";
-import { Intents, MessageReaction, PartialMessageReaction, PartialUser, User } from "discord.js";
+import { Intents } from "discord.js";
 
 dotenv.config();
 
@@ -20,10 +20,6 @@ console.log('Attempting connection to discord.');
 
 client.login(process.env.BOT_TOKEN);
 
-client.on('messageCreate', client.handle);
+client.on('messageCreate', client.handleMessage);
 
-client.on('messageReactionAdd', (reaction_orig: MessageReaction | PartialMessageReaction , user: User | PartialUser) => {
-    if(reaction_orig.message.author?.id === client.user?.id){
-        console.log(`reaction by ${user.username}`);
-    }
-});
+client.on('messageReactionAdd', client.handleReaction);

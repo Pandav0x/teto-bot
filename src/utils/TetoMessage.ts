@@ -20,8 +20,8 @@ export default class TetoMessage {
                 let db = this.caller.client.databaseManager.getDatabase(this.message.guildId);
     
                 if(db !== null){
-                    let statement: Statement|undefined = db.db?.prepare(`INSERT INTO command (teto_message_id, teto_message_content, user_id, user_message_id) VALUES (?, ?, ?, ?);`)
-                    statement?.run(message.id, JSON.stringify(message), this.message.author.id, this.message.id);
+                    let statement: Statement|undefined = db.db?.prepare(`INSERT INTO command (command, teto_message_id, teto_message_content, user_id, user_message_id) VALUES (?, ?, ?, ?, ?);`)
+                    statement?.run(this.caller.getName(), message.id, JSON.stringify(message), this.message.author.id, this.message.id);
                 }
             }
 
