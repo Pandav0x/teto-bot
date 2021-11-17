@@ -1,4 +1,4 @@
-import { EmbedField, MessageEmbed, User } from 'discord.js';
+import { Client, EmbedField, MessageEmbed, User } from 'discord.js';
 import BaseConverter from './BaseConverter';
 import DateTools from './DateTimeFormatter';
 import { Emoji } from './Emoji';
@@ -180,16 +180,21 @@ export default class PFEmbedBuilder {
     static instanciateFromMessage(message: MessageEmbed): PFEmbedBuilder {
         
         let embed = new PFEmbedBuilder();
+
+        let [tanksNumber, healersNumber, damagesNumber] = this.getTHDNumbers(message.fields);
         
         embed.setTitle(message.title ?? 'Title')
             .setColor(`#${(new BaseConverter().dec2hex(message.color ?? 0, 6))}`)
             .setFooter(message.footer?.text ?? '')
-            this.getDateFromField(message.fields)
+            .setDate(this.getDateFromField(message.fields))
+            .setTHDNumbers(tanksNumber, healersNumber, damagesNumber);
+
+            
         
         return embed;
     }
 
-    static getDateFromField(fields: EmbedField[]) {
+    static getDateFromField(fields: EmbedField[]): Date {
         for(let i = 0; i < fields.length; i++){
             if(fields[i].name.toLowerCase() === 'time'){
                 let regex = new RegExp('(?<=(\\*\\*))(?!\\sat\\s)([a-zA-z0-9\\s,])+?(?=(\\*\\*))', 'ig');
@@ -200,18 +205,59 @@ export default class PFEmbedBuilder {
 
                 let time = (new DateTools()).timeTo24Hours(unformatedTime.slice(0, -3));
 
-                console.log(`date: ${date} | unformatedTime: ${unformatedTime} | time: ${time}`);
-                
-                //Date.parse()
-
-                return '';
+                return new Date(`${date} ${time} GMT+0:00`);
             }
         }
-        return null;
+        return new Date();
     }
 
-    static getJobFields(fields: EmbedField[]) {
+    static getTHDNumbers(fields: EmbedField[]): Array<number> {
+        let [tanksNumber, healersNumber, damagesNumber] = [0, 0, 0];
+        
+        for(let i = 0; i < fields.length; i++){
 
+            if(fields[i].name.toLowerCase().includes('tank')){
+                tanksNumber = fields[i].value.split('\n').length;
+            }
+
+            if(fields[i].name.toLowerCase().includes('healer')){
+                healersNumber = fields[i].value.split('\n').length;
+            }
+
+            if(fields[i].name.toLowerCase().includes('dps')){
+                damagesNumber = fields[i].value.split('\n').length;
+            }
+        }
+
+        return [tanksNumber, healersNumber, damagesNumber];
+    }
+
+    static getUserForSpots(fields: EmbedField[]){
+        let tanks: Array<User> = new Array<User>();
+        let healers: Array<User> = new Array<User>();
+        let damages: Array<User> = new Array<User>();
+        
+        for(let i = 0; i < fields.length; i++){
+
+            if(fields[i].name.toLowerCase().includes('tank')){
+                let spots = fields[i].value.split('\n');
+                for(let j = 0; j < spots.length; j++){
+                    if(spots[j] !== '-'){
+                        console.log('find a user here'); //TODO
+                    }
+                }
+            }
+
+            if(fields[i].name.toLowerCase().includes('healer')){
+                //healersNumber = fields[i].value.split('\n').length;
+            }
+
+            if(fields[i].name.toLowerCase().includes('dps')){
+                //damagesNumber = fields[i].value.split('\n').length;
+            }
+        }
+
+        return;
     }
 }
 

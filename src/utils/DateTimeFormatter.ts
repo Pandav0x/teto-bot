@@ -1,16 +1,28 @@
 import { TimeZone } from "./TimeZone";
 
 export default class DateTimeFormatter {
-    timeTo24Hours(time: String|undefined): number {
-
-        //TODO - handle minutes
+    timeTo24Hours(time: String|undefined): string {
+        //TODO - fit to the tests
 
         if(typeof time == 'undefined'){
-            return new Date().getTime();
+            return new Date().toString();
+        }
+
+        if(time.match(/(a|p)m/) === null){
+            return <string>time;
         }
                 
-        let abbreviation: string = time.substring(-2).toLowerCase();
-        let hour: number = Number(time.slice(0, -2));
+        let abbreviation: string = time.slice(-2).toLowerCase();
+        
+        let hour: number = 0;
+        let minutes: string = '00';
+
+        if(time.match(/:/) !== null){
+            let [timeHours, minutes] = time.split(':');
+            hour = Number(timeHours.slice(0, -2));
+        } else {
+            hour = Number(time.slice(0, -2));
+        }        
 
         if(abbreviation === 'pm'){
             hour += 12;
@@ -18,7 +30,7 @@ export default class DateTimeFormatter {
 
         hour %= 24;
 
-        return hour;
+        return `${hour.toString().padStart(2, '0')}:${minutes.padStart(2, '0')}`;
     }
 
     timeTo12Hours(time: number): String {
@@ -67,5 +79,4 @@ export default class DateTimeFormatter {
     formatTime(date: Date): string {
         return `${date.getUTCDay()} ${date.getDay()} ${date.getFullYear()}`;
     }
-
 }
