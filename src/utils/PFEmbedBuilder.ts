@@ -1,6 +1,6 @@
 import { EmbedField, MessageEmbed, User } from 'discord.js';
 import BaseConverter from './BaseConverter';
-import DateTools from './DateTools';
+import DateTools from './DateTimeFormatter';
 import { Emoji } from './Emoji';
 
 export default class PFEmbedBuilder {
@@ -192,12 +192,17 @@ export default class PFEmbedBuilder {
     static getDateFromField(fields: EmbedField[]) {
         for(let i = 0; i < fields.length; i++){
             if(fields[i].name.toLowerCase() === 'time'){
-                let regex = new RegExp('(?<=(\\*\\*))([a-zA-z0-9\\s,])+?(?=(\\*\\*))', 'igm');
+                let regex = new RegExp('(?<=(\\*\\*))(?!\\sat\\s)([a-zA-z0-9\\s,])+?(?=(\\*\\*))', 'ig');
                 
-                let a = fields[i].value.matchAll(regex);
+                let matches: IterableIterator<RegExpMatchArray> = fields[i].value.matchAll(regex);
 
-                console.log(...a);
+                let [date, unformatedTime] = [...matches].map(e => { return e[0] });
+
+                let time = (new DateTools()).timeTo24Hours(unformatedTime.slice(0, -3));
+
+                console.log(`date: ${date} | unformatedTime: ${unformatedTime} | time: ${time}`);
                 
+                //Date.parse()
 
                 return '';
             }

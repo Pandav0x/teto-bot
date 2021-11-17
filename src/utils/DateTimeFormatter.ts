@@ -1,15 +1,15 @@
 import { TimeZone } from "./TimeZone";
 
-//TODO - change to TetoDate
-
-export default class DateTools {
+export default class DateTimeFormatter {
     timeTo24Hours(time: String|undefined): number {
+
+        //TODO - handle minutes
 
         if(typeof time == 'undefined'){
             return new Date().getTime();
         }
                 
-        let abbreviation: string = time.substr(-2).toLowerCase();
+        let abbreviation: string = time.substring(-2).toLowerCase();
         let hour: number = Number(time.slice(0, -2));
 
         if(abbreviation === 'pm'){
@@ -22,6 +22,7 @@ export default class DateTools {
     }
 
     timeTo12Hours(time: number): String {
+        //TODO - handle minutes
         return `${time%12}${(time < 12)? 'am' : 'pm'}`;
     }
 
