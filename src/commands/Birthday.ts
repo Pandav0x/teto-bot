@@ -2,7 +2,7 @@
 
 import { Message } from "discord.js";
 import Command from "../contracts/Command";
-import GuildDatabase from "../utils/GuildDatabase";
+import GuildDatabase from "../database/GuildDatabase";
 
 export default class Birthday extends Command {
 

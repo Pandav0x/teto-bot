@@ -1,10 +1,9 @@
 'use strict';
 
 import { Client, ClientOptions, Message, MessageReaction, PartialMessageReaction, PartialUser, User } from "discord.js";
-import DatabaseManager from "./utils/DatabaseManager";
+import DatabaseManager from "./database/DatabaseManager";
 import CommandHandler from './utils/CommandHandler';
 import Reactable from "./contracts/Reactable";
-import Command from "./contracts/Command";
 
 export default class TetoBot extends Client {
 
@@ -37,7 +36,7 @@ export default class TetoBot extends Client {
         }
 
         if(command.charAt(0) === process.env.BOT_PREFIX){
-            command = command.substr(1);
+            command = command.substring(1);
             if(command === undefined){
                 return;
             }
