@@ -23,3 +23,5 @@ client.login(process.env.BOT_TOKEN);
 client.on('messageCreate', client.handleMessage);
 
 client.on('messageReactionAdd', client.handleReaction);
+
+export { client };
