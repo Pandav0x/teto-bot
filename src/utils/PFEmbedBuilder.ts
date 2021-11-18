@@ -1,4 +1,4 @@
-import { Client, EmbedField, MessageEmbed, User } from 'discord.js';
+import { EmbedField, MessageEmbed, GuildMember } from 'discord.js';
 import BaseConverter from './BaseConverter';
 import DateTools from './DateTimeFormatter';
 import { Emoji } from './Emoji';
@@ -7,13 +7,13 @@ export default class PFEmbedBuilder {
 
     title: string;
 
-    tanks: User[];
+    tanks: GuildMember[];
     tanksNumber: number;
 
-    healers: User[];
+    healers: GuildMember[];
     healersNumber: number;
 
-    damages: User[];
+    damages: GuildMember[];
     damagesNumber: number;
 
     color: PFEmbedColor;
@@ -56,15 +56,15 @@ export default class PFEmbedBuilder {
             .setThumbnail(this.thumbnail)
             .addField('Time', `On the **${dt.formatDate(this.date)}** at **${dt.timeTo12Hours(this.date.getUTCHours())} ST**`);
 
-        if(this.tanksNumber !== 0){
+        if(this.tanksNumber != 0){
             embed.addField(`${ Emoji.TANK } Tanks`, this.getTanksField(), true);
         }
 
-        if(this.healersNumber !== 0){
+        if(this.healersNumber != 0){
             embed.addField(`${ Emoji.HEALER } Healers`, this.getHealersField(), true);
         }
 
-        if(this.damagesNumber !== 0){
+        if(this.damagesNumber != 0){
             embed.addField(`${ Emoji.DPS } Dps`, this.getDamagesField(), true);
         }
 
@@ -72,7 +72,7 @@ export default class PFEmbedBuilder {
             embed.setTimestamp();
         }
 
-        if(this.footer !== null) {
+        if(this.footer != null) {
             embed.setFooter(this.footer);
         }
 
@@ -123,39 +123,39 @@ export default class PFEmbedBuilder {
         return this;
     }
 
-    addTank(user: User) {
-        if(this.tanks.length < this.tanksNumber && !this.tanks.includes(user)){
-            this.tanks.push(user);
+    addTank(member: GuildMember) {
+        if(this.tanks.length < this.tanksNumber && !this.tanks.includes(member)){
+            this.tanks.push(member);
         }
     }
 
-    removeTank(user: User) {
-        if(this.tanks.includes(user)){
-            this.tanks = this.tanks.filter(u => u !== user);
+    removeTank(member: GuildMember) {
+        if(this.tanks.includes(member)){
+            this.tanks = this.tanks.filter(m => m != member);
         }
     }
 
-    addHealer(user: User){
-        if(this.healers.length < this.healersNumber && !this.healers.includes(user)){
-            this.healers.push(user);
+    addHealer(member: GuildMember){
+        if(this.healers.length < this.healersNumber && !this.healers.includes(member)){
+            this.healers.push(member);
         }
     }
 
-    removeHealer(user: User){
-        if(this.healers.includes(user)){
-            this.healers = this.healers.filter(u => u !== user);
+    removeHealer(member: GuildMember){
+        if(this.healers.includes(member)){
+            this.healers = this.healers.filter(m => m != member);
         }
     }
 
-    addDamage(user: User){        
-        if(this.damages.length < this.damagesNumber && !this.damages.includes(user)){
-            this.damages.push(user);
+    addDamage(member: GuildMember){        
+        if(this.damages.length < this.damagesNumber && !this.damages.includes(member)){
+            this.damages.push(member);
         }
     }
     
-    removeDamage(user: User){
-        if(this.damages.includes(user)){
-            this.damages = this.damages.filter(u => u !== user);
+    removeDamage(member: GuildMember){
+        if(this.damages.includes(member)){
+            this.damages = this.damages.filter(m => m != member);
         }
     }
 
@@ -171,8 +171,8 @@ export default class PFEmbedBuilder {
         return this.getSpotsString(this.damages, this.damagesNumber);
     }
 
-    getSpotsString(jobSpotsTaken: User[], jobSpotsMax: number): string {
-        let spots: Array<string> = jobSpotsTaken.map(u => { return u.username });
+    getSpotsString(jobSpotsTaken: GuildMember[], jobSpotsMax: number): string {
+        let spots: Array<string> = jobSpotsTaken.map(m => { return m.displayName });
         let leftoverSpots: Array<string> = new Array<string>(jobSpotsMax - jobSpotsTaken.length).fill('-');
         return [...spots, ...leftoverSpots].join('\n');
     }
@@ -196,7 +196,7 @@ export default class PFEmbedBuilder {
 
     static getDateFromField(fields: EmbedField[]): Date {
         for(let i = 0; i < fields.length; i++){
-            if(fields[i].name.toLowerCase() === 'time'){
+            if(fields[i].name.toLowerCase() == 'time'){
                 let regex = new RegExp('(?<=(\\*\\*))(?!\\sat\\s)([a-zA-z0-9\\s,])+?(?=(\\*\\*))', 'ig');
                 
                 let matches: IterableIterator<RegExpMatchArray> = fields[i].value.matchAll(regex);
@@ -232,18 +232,18 @@ export default class PFEmbedBuilder {
         return [tanksNumber, healersNumber, damagesNumber];
     }
 
-    static getUserForSpots(fields: EmbedField[]){
-        let tanks: Array<User> = new Array<User>();
-        let healers: Array<User> = new Array<User>();
-        let damages: Array<User> = new Array<User>();
+    static getMembersForSpots(fields: EmbedField[]){
+        let tanks: Array<GuildMember> = new Array<GuildMember>();
+        let healers: Array<GuildMember> = new Array<GuildMember>();
+        let damages: Array<GuildMember> = new Array<GuildMember>();
         
         for(let i = 0; i < fields.length; i++){
 
             if(fields[i].name.toLowerCase().includes('tank')){
                 let spots = fields[i].value.split('\n');
                 for(let j = 0; j < spots.length; j++){
-                    if(spots[j] !== '-'){
-                        console.log('find a user here'); //TODO
+                    if(spots[j] != '-'){
+                        console.log('find a member here'); //TODO
                     }
                 }
             }

@@ -1,6 +1,6 @@
 'use strict';
 
-import { EmbedField, Message, MessageReaction, PartialMessageReaction, PartialUser, User } from "discord.js";
+import { EmbedField, Message, MessageReaction, PartialMessageReaction, PartialUser, User, GuildMember } from "discord.js";
 import Command from "../contracts/Command";
 import Reactable from "../contracts/Reactable";
 import DateTools from "../utils/DateTimeFormatter";
@@ -72,15 +72,15 @@ export default class PartyFinder extends Command implements Reactable {
         let a = new TetoMessage(msg, this);
 
         a.send({ embeds: [embedMessage.getEmbed()] }).then(message => {
-            if(tanksNumber !== 0){
+            if(tanksNumber != 0){
                 message.react(`${ Emoji.TANK }`);
             }
 
-            if(healersNumber !== 0){
+            if(healersNumber != 0){
                 message.react(`${ Emoji.HEALER }`);
             }
 
-            if(damagesNumber !== 0){
+            if(damagesNumber != 0){
                 message.react(`${ Emoji.DPS }`);
             }
 
@@ -100,11 +100,11 @@ export default class PartyFinder extends Command implements Reactable {
 
         let [tankNumber, healerNumber, damageNumber] = new Array(3).fill(0);
 
-        if(player_comp !== ''){
+        if(player_comp != ''){
             [tankNumber, healerNumber, damageNumber] = player_comp.split(',').map(i => Number(i));    
         }
 
-        if((xman !== '' && Number.isInteger(Number(xman))) && player_comp === '') {
+        if((xman != '' && Number.isInteger(Number(xman))) && player_comp == '') {
             switch(Number(xman)){
                 case 24:
                     tankNumber += 1;
@@ -127,37 +127,42 @@ export default class PartyFinder extends Command implements Reactable {
 
     reacted(reactionOrigin: MessageReaction | PartialMessageReaction, user: User | PartialUser): void {
 
+        let member: GuildMember|undefined = reactionOrigin.message.guild?.members.cache.find(m => m.user == user);
+
+        if(typeof member == 'undefined'){
+            return;
+        }
+
         console.log(reactionOrigin.message.embeds[0]);
 
         PFEmbedBuilder.instanciateFromMessage(reactionOrigin.message.embeds[0])
 
-        if(reactionOrigin.emoji.toString() === Emoji.BIN){
+        if(reactionOrigin.emoji.toString() == Emoji.BIN){
             reactionOrigin.message.delete();
         }
 
-        if(reactionOrigin.emoji.toString() === Emoji.TANK){
-            let freeSpots = this.getFreeSpots(reactionOrigin.message.embeds[0].fields, 'tank', user);
+        if(reactionOrigin.emoji.toString() == Emoji.TANK){
+            let freeSpots = this.getFreeSpots(reactionOrigin.message.embeds[0].fields, 'tank', member);
             
-            if(freeSpots === 0){
+            if(freeSpots == 0){
                 reactionOrigin.remove();
             }
 
             //TODO
         }
 
-        if(reactionOrigin.emoji.toString() === Emoji.HEALER){
+        if(reactionOrigin.emoji.toString() == Emoji.HEALER){
             //TODO
         }
 
-        if(reactionOrigin.emoji.toString() === Emoji.DPS){
+        if(reactionOrigin.emoji.toString() == Emoji.DPS){
             //TODO
         }
 
-
-        console.log(`reaction by ${user.username}`);
+        console.log(`reaction by ${member.displayName}`);
     }
 
-    getFreeSpots(fields: EmbedField[], job: string, user: User | PartialUser) {        
+    getFreeSpots(fields: EmbedField[], job: string, member: GuildMember) {        
         let field: EmbedField | undefined;
 
         let jobRegex = new RegExp(`^.*${job.toLocaleLowerCase()}.*$`, 'ig')
@@ -175,10 +180,9 @@ export default class PartyFinder extends Command implements Reactable {
             return 0;
         }
 
-        let freeSpots = field.value.split('\n').filter(e => e === '-');
+        let freeSpots = field.value.split('\n').filter(e => e == '-');
 
-
-        if(freeSpots.length === 0){
+        if(freeSpots.length == 0){
             return 0;
         }
     }
