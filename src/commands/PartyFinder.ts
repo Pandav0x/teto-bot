@@ -3,6 +3,8 @@
 import { EmbedField, Message, MessageReaction, PartialMessageReaction, PartialUser, User, GuildMember } from "discord.js";
 import Command from "../contracts/Command";
 import Reactable from "../contracts/Reactable";
+import { client } from "../teto";
+import ClientSearch from "../utils/ClientSearch";
 import DateTools from "../utils/DateTimeFormatter";
 import { Emoji } from "../utils/Emoji";
 import PFEmbedBuilder from "../utils/PFEmbedBuilder";
@@ -63,7 +65,7 @@ export default class PartyFinder extends Command implements Reactable {
         let date: Date = dt.parseDate(<string>formatedArray.get('date'), <string>formatedArray.get('time'), <string>formatedArray.get('timezone'));
 
         // Embed message creation
-        let embedMessage = new PFEmbedBuilder();
+        let embedMessage = new PFEmbedBuilder(msg.guild);
         embedMessage.setTitle(<string> formatedArray.get('description'))
             .setDate(date)
             .setFooter(`Created by ${msg?.member?.displayName}.`)
@@ -125,7 +127,59 @@ export default class PartyFinder extends Command implements Reactable {
         return [tankNumber, healerNumber, damageNumber];
     }
 
-    reacted(reactionOrigin: MessageReaction | PartialMessageReaction, user: User | PartialUser): void {
+    reactionAdd(reactionOrigin: MessageReaction | PartialMessageReaction, user: User | PartialUser): void {
+        
+        let member: GuildMember|undefined = reactionOrigin.message.guild?.members.cache.find(m => m.user == user);
+
+        if(typeof member == 'undefined'){
+            return;
+        }
+
+        let embedMessage: PFEmbedBuilder = PFEmbedBuilder.instanciateFromMessage(reactionOrigin.message.guild, reactionOrigin.message.embeds[0]);
+
+        if(reactionOrigin.emoji.toString() == Emoji.BIN){
+            reactionOrigin.message.delete();
+        }
+
+        if(reactionOrigin.emoji.toString() == Emoji.TANK){
+            let member: GuildMember|null = (new ClientSearch()).getGuildMemberFromUser(reactionOrigin.message.guild, <User>user);
+
+            if(member == null)
+            {
+                return;
+            }
+
+            embedMessage.addTank(member);
+        }
+
+        if(reactionOrigin.emoji.toString() == Emoji.HEALER){
+            let member: GuildMember|null = (new ClientSearch()).getGuildMemberFromUser(reactionOrigin.message.guild, <User>user);
+
+            if(member == null)
+            {
+                return;
+            }
+
+            embedMessage.addHealer(member);
+        }
+
+        if(reactionOrigin.emoji.toString() == Emoji.DPS){
+            let member: GuildMember|null = (new ClientSearch()).getGuildMemberFromUser(reactionOrigin.message.guild, <User>user);
+
+            if(member == null)
+            {
+                return;
+            }
+
+            embedMessage.addDamage(member);
+        }
+
+        reactionOrigin.message.edit({embeds: [embedMessage.getEmbed()]});
+
+        console.log(`reaction added by ${member.displayName}`);
+    }
+
+    reactionRemove(reactionOrigin: MessageReaction | PartialMessageReaction, user: User | PartialUser): void {
 
         let member: GuildMember|undefined = reactionOrigin.message.guild?.members.cache.find(m => m.user == user);
 
@@ -133,42 +187,50 @@ export default class PartyFinder extends Command implements Reactable {
             return;
         }
 
-        console.log(reactionOrigin.message.embeds[0]);
-
-        PFEmbedBuilder.instanciateFromMessage(reactionOrigin.message.embeds[0])
-
-        if(reactionOrigin.emoji.toString() == Emoji.BIN){
-            reactionOrigin.message.delete();
-        }
+        let embedMessage: PFEmbedBuilder = PFEmbedBuilder.instanciateFromMessage(reactionOrigin.message.guild, reactionOrigin.message.embeds[0]);
 
         if(reactionOrigin.emoji.toString() == Emoji.TANK){
-            let freeSpots = this.getFreeSpots(reactionOrigin.message.embeds[0].fields, 'tank', member);
-            
-            if(freeSpots == 0){
-                reactionOrigin.remove();
+            let member: GuildMember|null = (new ClientSearch()).getGuildMemberFromUser(reactionOrigin.message.guild, <User>user);
+
+            if(member == null)
+            {
+                return;
             }
 
-            //TODO
+            embedMessage.removeTank(member);
         }
 
         if(reactionOrigin.emoji.toString() == Emoji.HEALER){
-            //TODO
+            let member: GuildMember|null = (new ClientSearch()).getGuildMemberFromUser(reactionOrigin.message.guild, <User>user);
+
+            if(member == null)
+            {
+                return;
+            }
+
+            embedMessage.removeHealer(member);
         }
 
         if(reactionOrigin.emoji.toString() == Emoji.DPS){
-            //TODO
+            let member: GuildMember|null = (new ClientSearch()).getGuildMemberFromUser(reactionOrigin.message.guild, <User>user);
+
+            if(member == null)
+            {
+                return;
+            }
+
+            embedMessage.removeDamage(member);
         }
 
-        console.log(`reaction by ${member.displayName}`);
+        reactionOrigin.message.edit({embeds: [embedMessage.getEmbed()]});
+
+        console.log(`reaction removed by ${member.displayName}`);
     }
 
     getFreeSpots(fields: EmbedField[], job: string, member: GuildMember) {        
         let field: EmbedField | undefined;
 
-        let jobRegex = new RegExp(`^.*${job.toLocaleLowerCase()}.*$`, 'ig')
-
-        console.log(jobRegex.source);
-        
+        let jobRegex = new RegExp(`^.*${job.toLocaleLowerCase()}.*$`, 'ig');      
 
         for(let i = 0; i < fields.length; i++){
             if(jobRegex.test(fields[i].name)){

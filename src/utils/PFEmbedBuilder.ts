@@ -1,9 +1,13 @@
-import { EmbedField, MessageEmbed, GuildMember } from 'discord.js';
+import { EmbedField, MessageEmbed, GuildMember, Guild, User } from 'discord.js';
 import BaseConverter from './BaseConverter';
+import ClientSearch from './ClientSearch';
 import DateTools from './DateTimeFormatter';
 import { Emoji } from './Emoji';
+import MessageHelper from './MessageHelper';
 
 export default class PFEmbedBuilder {
+
+    static guild: Guild|null;
 
     title: string;
 
@@ -28,7 +32,9 @@ export default class PFEmbedBuilder {
 
     description: string;
     
-    constructor(){
+    //TODO - remove guild and assign it through a method (?)
+    constructor(guild: Guild|null){
+        PFEmbedBuilder.guild = guild;
         this.title = 'Title';
         this.tanks = [];
         this.tanksNumber = 0;
@@ -129,6 +135,13 @@ export default class PFEmbedBuilder {
         }
     }
 
+    addTanks(members: Array<GuildMember>): PFEmbedBuilder {
+        for(let i = 0; i< members.length; i++){
+            this.addTank(members[i]);
+        }
+        return this;
+    }
+
     removeTank(member: GuildMember) {
         if(this.tanks.includes(member)){
             this.tanks = this.tanks.filter(m => m != member);
@@ -141,6 +154,13 @@ export default class PFEmbedBuilder {
         }
     }
 
+    addHealers(members: Array<GuildMember>): PFEmbedBuilder {
+        for(let i = 0; i< members.length; i++){
+            this.addHealer(members[i]);
+        }
+        return this;
+    }
+
     removeHealer(member: GuildMember){
         if(this.healers.includes(member)){
             this.healers = this.healers.filter(m => m != member);
@@ -151,6 +171,13 @@ export default class PFEmbedBuilder {
         if(this.damages.length < this.damagesNumber && !this.damages.includes(member)){
             this.damages.push(member);
         }
+    }
+
+    addDamages(members: Array<GuildMember>): PFEmbedBuilder {
+        for(let i = 0; i< members.length; i++){
+            this.addDamage(members[i]);
+        }
+        return this;
     }
     
     removeDamage(member: GuildMember){
@@ -172,25 +199,26 @@ export default class PFEmbedBuilder {
     }
 
     getSpotsString(jobSpotsTaken: GuildMember[], jobSpotsMax: number): string {
-        let spots: Array<string> = jobSpotsTaken.map(m => { return m.displayName });
+        let spots: Array<string> = jobSpotsTaken.map(m => { return (new MessageHelper()).getMentionFromMember(m) });
         let leftoverSpots: Array<string> = new Array<string>(jobSpotsMax - jobSpotsTaken.length).fill('-');
         return [...spots, ...leftoverSpots].join('\n');
     }
 
-    static instanciateFromMessage(message: MessageEmbed): PFEmbedBuilder {
+    static instanciateFromMessage(guild: Guild|null, message: MessageEmbed): PFEmbedBuilder {
         
-        let embed = new PFEmbedBuilder();
+        let embed = new PFEmbedBuilder(guild);
 
         let [tanksNumber, healersNumber, damagesNumber] = this.getTHDNumbers(message.fields);
         
         embed.setTitle(message.title ?? 'Title')
             .setColor(`#${(new BaseConverter().dec2hex(message.color ?? 0, 6))}`)
             .setFooter(message.footer?.text ?? '')
-            .setDate(this.getDateFromField(message.fields))
-            .setTHDNumbers(tanksNumber, healersNumber, damagesNumber);
+            .setDate(PFEmbedBuilder.getDateFromField(message.fields))
+            .setTHDNumbers(tanksNumber, healersNumber, damagesNumber)
+            .addTanks(PFEmbedBuilder.getMembersForSpot(message.fields, 'tank'))
+            .addHealers(PFEmbedBuilder.getMembersForSpot(message.fields, 'healer'))
+            .addDamages(PFEmbedBuilder.getMembersForSpot(message.fields, 'dps'));
 
-            
-        
         return embed;
     }
 
@@ -232,32 +260,38 @@ export default class PFEmbedBuilder {
         return [tanksNumber, healersNumber, damagesNumber];
     }
 
-    static getMembersForSpots(fields: EmbedField[]){
-        let tanks: Array<GuildMember> = new Array<GuildMember>();
-        let healers: Array<GuildMember> = new Array<GuildMember>();
-        let damages: Array<GuildMember> = new Array<GuildMember>();
+    static getMembersForSpot(fields: EmbedField[], spotName: string){
+
+        let clientSearch: ClientSearch = new ClientSearch();
+
+        let spotsTaken: Array<GuildMember> = new Array<GuildMember>();
         
         for(let i = 0; i < fields.length; i++){
-
-            if(fields[i].name.toLowerCase().includes('tank')){
+            if(fields[i].name.toLowerCase().includes(spotName.toLowerCase())){
                 let spots = fields[i].value.split('\n');
                 for(let j = 0; j < spots.length; j++){
                     if(spots[j] != '-'){
-                        console.log('find a member here'); //TODO
+                        let memberId = (new MessageHelper()).getMemberIdFromMention(spots[j]);
+
+                        let user: User|null = clientSearch.getUserById(memberId);
+
+                        if(user == null){
+                            continue;
+                        }
+                        
+                        let member: GuildMember|null = clientSearch.getGuildMemberFromUser(PFEmbedBuilder.guild, user);
+
+                        if(member == null){
+                            continue;
+                        }
+
+                        spotsTaken.push(member);
                     }
                 }
             }
-
-            if(fields[i].name.toLowerCase().includes('healer')){
-                //healersNumber = fields[i].value.split('\n').length;
-            }
-
-            if(fields[i].name.toLowerCase().includes('dps')){
-                //damagesNumber = fields[i].value.split('\n').length;
-            }
         }
 
-        return;
+        return spotsTaken;
     }
 }
 
