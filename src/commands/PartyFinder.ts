@@ -1,6 +1,6 @@
 'use strict';
 
-import { EmbedField, Message, MessageReaction, PartialMessageReaction, PartialUser, User, GuildMember } from "discord.js";
+import { EmbedField, Message, MessageReaction, PartialMessageReaction, PartialUser, User, GuildMember, UserResolvable } from "discord.js";
 import Command from "../contracts/Command";
 import Reactable from "../contracts/Reactable";
 import { client } from "../teto";
@@ -149,6 +149,10 @@ export default class PartyFinder extends Command implements Reactable {
                 return;
             }
 
+            if(embedMessage.healers.includes(member) || embedMessage.damages.includes(member)){
+                reactionOrigin.users.remove(<UserResolvable>user);
+            }
+
             embedMessage.addTank(member);
         }
 
@@ -160,6 +164,10 @@ export default class PartyFinder extends Command implements Reactable {
                 return;
             }
 
+            if(embedMessage.tanks.includes(member) || embedMessage.damages.includes(member)){
+                reactionOrigin.users.remove(<UserResolvable>user);
+            }
+
             embedMessage.addHealer(member);
         }
 
@@ -169,6 +177,10 @@ export default class PartyFinder extends Command implements Reactable {
             if(member == null)
             {
                 return;
+            }
+
+            if(embedMessage.tanks.includes(member) || embedMessage.healers.includes(member)){
+                reactionOrigin.users.remove(<UserResolvable>user);
             }
 
             embedMessage.addDamage(member);
