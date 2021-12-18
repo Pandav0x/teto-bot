@@ -92,9 +92,9 @@ export default class PartyFinder extends Command implements Reactable {
         return 0;
     } 
 
-    getJobFields(xman: string|undefined, player_comp: string|undefined): Array<number> {
+    getJobFields(xman: string|undefined, playerComp: string|undefined): Array<number> {
 
-        if(typeof xman == 'undefined' || typeof player_comp == 'undefined'){
+        if(typeof xman == 'undefined' || typeof playerComp == 'undefined'){
             return [];
         }
 
@@ -102,11 +102,11 @@ export default class PartyFinder extends Command implements Reactable {
 
         let [tankNumber, healerNumber, damageNumber] = new Array(3).fill(0);
 
-        if(player_comp != ''){
-            [tankNumber, healerNumber, damageNumber] = player_comp.split(',').map(i => Number(i));    
+        if(playerComp != ''){
+            [tankNumber, healerNumber, damageNumber] = playerComp.split(',').map(i => Number(i));    
         }
 
-        if((xman != '' && Number.isInteger(Number(xman))) && player_comp == '') {
+        if((xman != '' && Number.isInteger(Number(xman))) && playerComp == '') {
             switch(Number(xman)){
                 case 24:
                     tankNumber += 1;

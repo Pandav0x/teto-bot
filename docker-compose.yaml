@@ -20,6 +20,22 @@ services:
       - BOT_PREFIX=$BOT_PREFIX
       - REDIS_URL=redis://127.0.0.1:6379
     command: node teto.js
+  bot-alert:
+    build: .docker/bot-alert
+    working_dir: /teto/build/
+    depends_on:
+      - redis
+      - bot-typescript
+      - bot-server
+    volumes:
+      - ./build:/teto/build
+      - ./node_modules:/teto/build/node_modules
+      - ./databases:/teto/databases
+    networks:
+      - backend
+    environment:
+      - REDIS_URL=redis://127.0.0.1:6379
+    command: node alert.js
   bot-typescript:
     build: .docker/bot-typescript
     working_dir: /teto
