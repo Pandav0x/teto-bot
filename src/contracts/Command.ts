@@ -5,7 +5,7 @@ export default abstract class Command {
     
     client: TetoBot;
     
-    isRecordable: boolean = false;
+    isRecordable: boolean = false; //TODO - keeping this ?
 
     constructor(client: TetoBot){
         this.client = client;

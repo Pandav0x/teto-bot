@@ -1,4 +1,4 @@
-import { reduceEachTrailingCommentRange } from "typescript";
+import TetoMessage from "../utils/TetoMessage";
 
 export default class ScheduledMessage {
 

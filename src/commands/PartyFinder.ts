@@ -3,7 +3,6 @@
 import { EmbedField, Message, MessageReaction, PartialMessageReaction, PartialUser, User, GuildMember, UserResolvable } from "discord.js";
 import Command from "../contracts/Command";
 import Reactable from "../contracts/Reactable";
-import { client } from "../teto";
 import ClientSearch from "../utils/ClientSearch";
 import DateTools from "../utils/DateTimeFormatter";
 import { Emoji } from "../utils/Emoji";
@@ -60,9 +59,9 @@ export default class PartyFinder extends Command implements Reactable {
             <string|undefined> formatedArray.get('player_comp')
         );
 
-        let dt = new DateTools();
+        let dateTools = new DateTools();
 
-        let date: Date = dt.parseDate(<string>formatedArray.get('date'), <string>formatedArray.get('time'), <string>formatedArray.get('timezone'));
+        let date: Date = dateTools.parseDate(<string>formatedArray.get('date'), <string>formatedArray.get('time'), <string>formatedArray.get('timezone'));
 
         // Embed message creation
         let embedMessage = new PFEmbedBuilder(msg.guild);
@@ -71,9 +70,9 @@ export default class PartyFinder extends Command implements Reactable {
             .setFooter(`Created by ${msg?.member?.displayName}.`)
             .setTHDNumbers(tanksNumber, healersNumber, damagesNumber);
 
-        let a = new TetoMessage(msg, this);
+        let tetoMessage = new TetoMessage(msg, this);
 
-        a.send({ embeds: [embedMessage.getEmbed()] }).then(message => {
+        tetoMessage.send({ embeds: [embedMessage.getEmbed()] }).then(message => {
             if(tanksNumber != 0){
                 message.react(`${ Emoji.TANK }`);
             }
@@ -128,6 +127,8 @@ export default class PartyFinder extends Command implements Reactable {
     }
 
     reactionAdd(reactionOrigin: MessageReaction | PartialMessageReaction, user: User | PartialUser): void {
+
+        //TODO - clean this
         
         let member: GuildMember|undefined = reactionOrigin.message.guild?.members.cache.find(m => m.user == user);
 
@@ -192,6 +193,8 @@ export default class PartyFinder extends Command implements Reactable {
     }
 
     reactionRemove(reactionOrigin: MessageReaction | PartialMessageReaction, user: User | PartialUser): void {
+
+        //TODO - clean this
 
         let member: GuildMember|undefined = reactionOrigin.message.guild?.members.cache.find(m => m.user == user);
 

@@ -1,4 +1,4 @@
-import { Base, Message, MessageOptions, MessagePayload } from "discord.js";
+import { Message, MessageOptions, MessagePayload } from "discord.js";
 import { Statement } from "sqlite3";
 import BaseCommand from "../contracts/Command";
 
@@ -14,6 +14,8 @@ export default class TetoMessage {
     }
 
     send(options: string | MessagePayload | MessageOptions): Promise<Message> {
+
+        //TODO - keeping save in db in here ?
 
         return this.message.channel.send(options).then(message => {
             if(this.caller.isRecordable){
